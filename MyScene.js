@@ -4,6 +4,7 @@ import { GUI } from '../libs/dat.gui.module.js'
 import { TrackballControls } from '../libs/TrackballControls.js'
 
 import { Ensamblado } from './modelos/coche_lunar/Ensamblado.js' //Modelo robot principal 
+import { Circuito } from './modelos/circuito/Circuito.js';
 
 class MyScene extends THREE.Scene {
 
@@ -22,8 +23,8 @@ class MyScene extends THREE.Scene {
     this.axis.position.set (0, 0, 0);
     this.add (this.axis);
 
-    this.ensamblado = new Ensamblado(this.gui, "Controles del ensamblado");
-    this.add(this.ensamblado);
+    this.circuito = new Circuito ();
+    this.add (this.circuito);
 
   }
   
