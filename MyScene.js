@@ -8,131 +8,175 @@ import { Circuito } from './modelos/circuito/Circuito.js';
 
 class MyScene extends THREE.Scene {
 
-  constructor (myCanvas) { 
+  constructor(myCanvas) {
     super();
-    
+
     this.renderer = this.createRenderer(myCanvas);
-    
-    this.gui = this.createGUI ();
 
-    this.createLights ();
+    this.gui = this.createGUI();
 
-    this.createCamera ();
-    
-    this.axis = new THREE.AxesHelper (1);
-    this.axis.position.set (0, 0, 0);
-    this.add (this.axis);
+    this.createLights();
 
-    this.circuito = new Circuito ();
-    this.add (this.circuito);
+    this.createCamera();
+    this.createCameraThirdPerson();
 
+    // this.axis = new THREE.AxesHelper(1);
+    // this.axis.position.set(0, 0, 0);
+    // this.add(this.axis);
+
+    this.circuito = new Circuito();
+    this.add(this.circuito);
+
+    this.prota = new Ensamblado(this.circuito.children[0]);
+    //this.prota.add(this.cameraController); //Añadimos la cámara al prota
+    this.add(this.prota);
+
+    this.fondo = new THREE.Mesh(new THREE.SphereGeometry(300, 300, 300), new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('./imgs/fondo.jpg'), side: THREE.DoubleSide }));
+    this.add(this.fondo);
   }
-  
-  createCamera () {
 
-    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 200);
+  createCamera() {
 
-    this.camera.position.set (5, 5, 5);
-    var look = new THREE.Vector3 (0,0,0);
+    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 600);
+
+    this.camera.position.set(0, 0, 200);
+    var look = new THREE.Vector3(0, 0, 0);
     this.camera.lookAt(look);
-    this.add (this.camera);
+    this.add(this.camera);
 
-    this.cameraControl = new TrackballControls (this.camera, this.renderer.domElement);
-    
+    this.cameraControl = new TrackballControls(this.camera, this.renderer.domElement);
+
     this.cameraControl.rotateSpeed = 5;
     this.cameraControl.zoomSpeed = -2;
     this.cameraControl.panSpeed = 0.5;
 
     this.cameraControl.target = look;
   }
-  
-  createGUI () {
+
+  createCameraThirdPerson() {
+
+    this.cameraController = new THREE.Object3D();
+    this.cameraController.position.set(0, 4, -10);
+    this.cameraController.rotateY(Math.PI);
+    this.cameraController.rotateX(-Math.PI / 14);
+
+    this.camera2 = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 600);
+    
+    this.cameraController.add(this.camera2);  
+  }
+
+  createGUI() {
 
     var gui = new GUI();
-    
+
     this.guiControls = {
       // En el contexto de una función   this   alude a la función
-      lightPower : 100.0,  // La potencia de esta fuente de luz se mide en lúmenes
-      lightPower2 : 600.0,
-      ambientIntensity : 0.35,
-      axisOnOff : true
+      lightPower: 600.0,  // La potencia de esta fuente de luz se mide en lúmenes
+      ambientIntensity: 0.80,
+      axisOnOff: true,
+      t: 0.5,
+      cambia : false
     }
 
-    var folder = gui.addFolder ('Luz y Ejes');
-    
-    folder.add (this.guiControls, 'lightPower', 0, 2000, 10)
+    var folder = gui.addFolder('Luz y Ejes');
+
+    folder.add(this.guiControls, 'lightPower', 0, 2000, 10)
       .name('Luz puntual : ')
-      .onChange ( (value) => this.setLightPower(value) );
-    
-    folder.add (this.guiControls, 'ambientIntensity', 0, 1, 0.05)
+      .onChange((value) => this.setLightPower(value));
+
+    folder.add(this.guiControls, 'ambientIntensity', 0, 1, 0.05)
       .name('Luz ambiental: ')
-      .onChange ( (value) => this.setAmbientIntensity(value) );
-      
-    folder.add (this.guiControls, 'axisOnOff')
-      .name ('Mostrar ejes : ')
-      .onChange ( (value) => this.setAxisVisible (value) );
-    
+      .onChange((value) => this.setAmbientIntensity(value));
+
+    folder.add(this.guiControls, 'axisOnOff')
+      .name('Mostrar ejes : ')
+      .onChange((value) => this.setAxisVisible(value));
+
+    folder.add(this.guiControls, 't', 0, 1, 0.0001)
+      .name('Recorrido : ')
+      .onChange((value) => this.prota.update(value));
+
+    folder.add(this.guiControls, 'cambia')
+      .name('Cambia camara : ')
+      .onChange((value) => this.cambiaCamara());
+
     return gui;
   }
-  
-  createLights () {
+
+  cambiaCamara(){
+    if(this.guiControls.cambia){
+      this.remove(this.camera);
+      this.prota.add(this.cameraController);
+    }else{
+      this.prota.remove(this.cameraController);
+      this.add(this.camera);
+    }
+  }
+
+  createLights() {
 
     this.ambientLight = new THREE.AmbientLight('white', this.guiControls.ambientIntensity);
-    this.add (this.ambientLight);
-    
-    this.pointLight = new THREE.SpotLight( 0xffffff );
+    this.add(this.ambientLight);
+
+    this.pointLight = new THREE.SpotLight(0xffffff);
     this.pointLight.power = this.guiControls.lightPower;
-    this.pointLight.position.set( 2, 3, 1 );
-    this.add (this.pointLight);
+    this.pointLight.position.set(0, 0, 2);
+    this.add(this.pointLight);
 
   }
-  
-  setLightPower (valor) {
+
+  setLightPower(valor) {
     this.pointLight.power = valor;
   }
 
-  setAmbientIntensity (valor) {
+  setAmbientIntensity(valor) {
     this.ambientLight.intensity = valor;
-  }  
-  
-  setAxisVisible (valor) {
+  }
+
+  setAxisVisible(valor) {
     this.axis.visible = valor;
   }
-  
-  createRenderer (myCanvas) {
+
+  createRenderer(myCanvas) {
 
     var renderer = new THREE.WebGLRenderer();
 
     renderer.setClearColor(new THREE.Color(0xffffff), 1.0);
-    
+
     renderer.setSize(window.innerWidth, window.innerHeight);
-    
+
     $(myCanvas).append(renderer.domElement);
-    
-    return renderer;  
+
+    return renderer;
   }
-  
-  getCamera () {
-    return this.camera;
+
+  getCamera() {
+    if (this.guiControls.cambia) {
+      return this.camera2;
+    }else{
+      return this.camera;
+    }
   }
-  
-  setCameraAspect (ratio) {
+
+  setCameraAspect(ratio) {
     this.camera.aspect = ratio;
     this.camera.updateProjectionMatrix();
   }
-    
-  onWindowResize () {
 
-    this.setCameraAspect (window.innerWidth / window.innerHeight);
+  onWindowResize() {
 
-    this.renderer.setSize (window.innerWidth, window.innerHeight);
+    this.setCameraAspect(window.innerWidth / window.innerHeight);
+
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
-  update () {
+  update() {
 
-    this.renderer.render (this, this.getCamera());
+    this.renderer.render(this, this.getCamera());
 
-    this.cameraControl.update();
+    if ( !this.guiControls.cambia ) { 
+      this.cameraControl.update();
+    }
 
     requestAnimationFrame(() => this.update());
 
@@ -144,7 +188,7 @@ class MyScene extends THREE.Scene {
 $(function () {
 
   var scene = new MyScene("#WebGL-output");
-  window.addEventListener ("resize", () => scene.onWindowResize());
+  window.addEventListener("resize", () => scene.onWindowResize());
   scene.update();
 
 });
