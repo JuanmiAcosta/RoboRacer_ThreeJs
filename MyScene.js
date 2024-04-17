@@ -31,13 +31,13 @@ class MyScene extends THREE.Scene {
     //this.prota.add(this.cameraController); //Añadimos la cámara al prota
     this.add(this.prota);
 
-    this.fondo = new THREE.Mesh(new THREE.SphereGeometry(300, 300, 300), new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('./imgs/fondo.jpg'), side: THREE.DoubleSide }));
+    this.fondo = new THREE.Mesh(new THREE.BoxGeometry(600,600,600), new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('./imgs/fondo.jpg'), side: THREE.DoubleSide }));
     this.add(this.fondo);
   }
 
   createCamera() {
 
-    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 600);
+    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 800);
 
     this.camera.position.set(0, 0, 200);
     var look = new THREE.Vector3(0, 0, 0);
@@ -56,13 +56,14 @@ class MyScene extends THREE.Scene {
   createCameraThirdPerson() {
 
     this.cameraController = new THREE.Object3D();
-    this.cameraController.position.set(0, 4, -10);
+    this.cameraController.position.set(0, 10, -16);
     this.cameraController.rotateY(Math.PI);
-    this.cameraController.rotateX(-Math.PI / 14);
+    this.cameraController.rotateX(-Math.PI / 8);
 
     this.camera2 = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 600);
     
     this.cameraController.add(this.camera2);  
+    this.cameraController.add(this.iluminacionProta);
   }
 
   createGUI() {
@@ -122,6 +123,14 @@ class MyScene extends THREE.Scene {
     this.pointLight.power = this.guiControls.lightPower;
     this.pointLight.position.set(0, 0, 2);
     this.add(this.pointLight);
+
+    this.pointLight2 = new THREE.SpotLight(0xffffff);
+    this.pointLight2.power = this.guiControls.lightPower;
+    this.pointLight2.position.set(0, 0, -2);
+    this.add(this.pointLight2);
+
+    this.iluminacionProta = new THREE.SpotLight(0xffffff);
+    this.iluminacionProta.power = this.guiControls.lightPower;
 
   }
 
