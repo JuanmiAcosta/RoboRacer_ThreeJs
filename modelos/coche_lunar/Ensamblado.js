@@ -11,10 +11,15 @@ import { Cabeza } from './Cabeza.js'
 
 class Ensamblado extends THREE.Object3D {
 
-  constructor(tuboMesh, t = 0.5 ) {
+  constructor(tuboMesh, t = 0.5, alfa = 0) {
     super();
 
+    this.t = t;
+    this.alfa = alfa;
+
     var geomTubo = tuboMesh.geometry;
+
+    this.ensamblado = new THREE.Object3D();
 
     // BRAZO --------------------------------------------------------------------------------------------
 
@@ -23,7 +28,7 @@ class Ensamblado extends THREE.Object3D {
     this.brazor.rotation.z = Math.PI / 2;
     this.brazor.rotation.x = Math.PI;
     //this.brazo.scale.set(0.5, 0.5, 0.5); //Así mide un metro de largo
-    this.add(this.brazor);
+    this.ensamblado.add(this.brazor);
 
     this.brazol = new Brazo_robot("l");
     this.brazol.position.set(1.2, 1.6, 0);
@@ -31,7 +36,7 @@ class Ensamblado extends THREE.Object3D {
     this.brazol.rotation.z = Math.PI / 2;
     this.brazol.rotation.x = Math.PI;
 
-    this.add(this.brazol);
+    this.ensamblado.add(this.brazol);
 
     // RUEDAS --------------------------------------------------------------------------------------------
 
@@ -53,24 +58,24 @@ class Ensamblado extends THREE.Object3D {
     this.ruedalm.position.set(0.7, 0, 0);
     this.ruedarm.position.set(-0.7, 0, 0);
 
-    this.add(this.ruedalt);
-    this.add(this.ruedalb);
+    this.ensamblado.add(this.ruedalt);
+    this.ensamblado.add(this.ruedalb);
 
-    this.add(this.ruedart);
-    this.add(this.ruedarb);
+    this.ensamblado.add(this.ruedart);
+    this.ensamblado.add(this.ruedarb);
 
-    this.add(this.ruedalm);
-    this.add(this.ruedarm);
+    this.ensamblado.add(this.ruedalm);
+    this.ensamblado.add(this.ruedarm);
 
     // CHASIS --------------------------------------------------------------------------------------------
 
     this.chasis = new Chasis();
-    this.add(this.chasis);
+    this.ensamblado.add(this.chasis);
 
     // CABEZA --------------------------------------------------------------------------------------------
 
     this.cabeza = new Cabeza();
-    this.add(this.cabeza);
+    this.ensamblado.add(this.cabeza);
 
     // TUBO --------------------------------------------------------------------------------------------
     // El constructor del personaje recibe la geometria del Tubo para extraer información necesaria
@@ -79,25 +84,42 @@ class Ensamblado extends THREE.Object3D {
     this.radio = geomTubo.parameters.radius;
     this.segmentos = geomTubo.parameters.tubularSegments;
 
-    this.update(t);
+    this.padreTraslation = new THREE.Object3D();
+    this.padreTraslation.add(this.ensamblado);
+
+    this.padreRotation = new THREE.Object3D();
+    this.padreRotation.add(this.padreTraslation);
+
+    this.padrisimo = new THREE.Object3D();
+    this.padrisimo.add(this.padreRotation);
+
+    this.add(this.padrisimo);
+
+    this.update(t,alfa);
   }
 
-  update(t) {
+  update(t,alfa) {
     
 
     var posTmp = this.path.getPointAt(t);
-    this.position.copy(posTmp);
+    this.padrisimo.position.copy(posTmp);
     // Para l a o r i e n t a c i ón necesitamos l a tangente y l a binormal del tubo en esa p o s i c i ón
     // también los extraemos del camino y tubo respectivamente
     var tangente = this.path.getTangentAt(t);
     posTmp.add(tangente);
     var segmentoActual = Math.floor(t * this.segmentos);
-    this.up = this.tubo.binormals[segmentoActual];
-    this.lookAt(posTmp);
+    this.padrisimo.up = this.tubo.binormals[segmentoActual];
+    this.padrisimo.lookAt(posTmp);
 
-    this.translateY(this.radio+0.6); //Para que el coche no esté enterrado en el suelo
+    this.padreTraslation.position.y = (this.radio+0.6); //Para que el coche no esté enterrado en el suelo
+
+    this.padreRotation.rotation.z = (alfa);
+
+    this.t = t;
+    this.alfa = alfa;
     
   }
+
 
 }
 

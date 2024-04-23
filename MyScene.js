@@ -1,5 +1,5 @@
 
-import * as THREE from './libs/three.module.js'
+import * as THREE from 'three'
 import { GUI } from './libs/dat.gui.module.js'
 import { TrackballControls } from './libs/TrackballControls.js'
 
@@ -31,8 +31,28 @@ class MyScene extends THREE.Scene {
     //this.prota.add(this.cameraController); //Añadimos la cámara al prota
     this.add(this.prota);
 
-    this.fondo = new THREE.Mesh(new THREE.SphereGeometry(300,300,300), new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide }));
+    this.fondo = new THREE.Mesh(new THREE.SphereGeometry(300, 300, 300), new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide }));
     this.add(this.fondo);
+
+    // Escuchar eventos de teclado
+    document.addEventListener('keydown', (event) => {
+      this.leerEntrada(event);
+      this.moverProta();
+
+    });
+
+    document.addEventListener('keyup', (event) => {
+      this.leerEntrada(event);
+      this.moverProta();
+    });
+
+    //Crear un map para almacenar tecla y booleano
+    this.teclas = new Map();
+    this.leerEntrada = (e) => {
+      this.teclas.set(e.key, e.type === 'keydown');
+      console.log(this.teclas);
+    }
+
   }
 
   createCamera() {
@@ -56,13 +76,13 @@ class MyScene extends THREE.Scene {
   createCameraThirdPerson() {
 
     this.cameraController = new THREE.Object3D();
-    this.cameraController.position.set(0, 10, -16);
+    this.cameraController.position.set(0, 20, -16);
     this.cameraController.rotateY(Math.PI);
     this.cameraController.rotateX(-Math.PI / 8);
 
     this.camera2 = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 600);
-    
-    this.cameraController.add(this.camera2);  
+
+    this.cameraController.add(this.camera2);
     this.cameraController.add(this.iluminacionProta);
   }
 
@@ -76,7 +96,8 @@ class MyScene extends THREE.Scene {
       ambientIntensity: 0.80,
       axisOnOff: true,
       t: 0.5,
-      cambia : false
+      alfa: 0,
+      cambia: false
     }
 
     var folder = gui.addFolder('Luz y Ejes');
@@ -95,7 +116,11 @@ class MyScene extends THREE.Scene {
 
     folder.add(this.guiControls, 't', 0, 1, 0.0001)
       .name('Recorrido : ')
-      .onChange((value) => this.prota.update(value));
+      .onChange((value) => this.prota.update(value, this.guiControls.alfa));
+
+    folder.add(this.guiControls, 'alfa', 0, 2 * Math.PI, 0.01)
+      .name('Giro : ')
+      .onChange((value) => this.prota.update(this.guiControls.t, value));
 
     folder.add(this.guiControls, 'cambia')
       .name('Cambia camara : ')
@@ -104,12 +129,27 @@ class MyScene extends THREE.Scene {
     return gui;
   }
 
-  cambiaCamara(){
-    if(this.guiControls.cambia){
+  moverProta() {
+    if (this.teclas.get('w')) {
+      this.prota.update((this.prota.t + 0.005) % 1, this.prota.alfa);
+    }
+    if (this.teclas.get('a')) {
+      this.prota.update(this.prota.t, (this.prota.alfa - 0.1) % (Math.PI * 2));
+    }
+    if (this.teclas.get('s')) {
+      this.prota.update((this.prota.t - 0.005) % 1, this.prota.alfa);
+    }
+    if (this.teclas.get('d')) {
+      this.prota.update(this.prota.t, (this.prota.alfa + 0.1) % (Math.PI * 2));
+    }
+  }
+
+  cambiaCamara() {
+    if (this.guiControls.cambia) {
       this.remove(this.camera);
-      this.prota.add(this.cameraController);
-    }else{
-      this.prota.remove(this.cameraController);
+      this.prota.children[0].children[0].add(this.cameraController);
+    } else {
+      this.prota.children[0].children[0].remove(this.cameraController);
       this.add(this.camera);
     }
   }
@@ -162,7 +202,7 @@ class MyScene extends THREE.Scene {
   getCamera() {
     if (this.guiControls.cambia) {
       return this.camera2;
-    }else{
+    } else {
       return this.camera;
     }
   }
@@ -183,7 +223,7 @@ class MyScene extends THREE.Scene {
 
     this.renderer.render(this, this.getCamera());
 
-    if ( !this.guiControls.cambia ) { 
+    if (!this.guiControls.cambia) {
       this.cameraControl.update();
     }
 

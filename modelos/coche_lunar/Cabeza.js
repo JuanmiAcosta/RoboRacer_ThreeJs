@@ -46,6 +46,8 @@ class Cabeza extends THREE.Object3D {
       video.load();
       video.play();
       video.loop = true;
+      //silenciar
+      video.muted = true;
 
       let videoTexture = new THREE.VideoTexture(video);
       let panel = new THREE.Mesh(panelGeo, new THREE.MeshPhongMaterial({ map: videoTexture }));
