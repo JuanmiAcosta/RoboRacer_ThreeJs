@@ -1,6 +1,6 @@
-import * as THREE from '../libs/three.module.js'//Se importa la biblioteca three.module.js
+import * as THREE from 'libs/three.module.js'//Se importa la biblioteca three.module.js
 
-import {CSG} from '.../../../libs/CSG-v2.js'
+import {CSG} from 'libs/CSG-v2.js'
 import { Plancton } from './plancton.js'
  
 class Ovni extends THREE.Object3D { 

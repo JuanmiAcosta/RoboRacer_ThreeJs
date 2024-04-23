@@ -127,7 +127,7 @@ class Chasis extends THREE.Object3D {
         let placaSolarGeometry = new THREE.BoxGeometry(1.2, 0.1, 1.6);
         placaSolarGeometry.rotateX(-Math.PI / 4);
 
-        let texture = new THREE.TextureLoader().load('../imgs/placa_solar.jpg');
+        let texture = new THREE.TextureLoader().load('imgs/placa_solar.jpg');
         let materialPlacaSolar = new THREE.MeshPhongMaterial({ map: texture });
 
         let placaSolar = new THREE.Mesh(placaSolarGeometry, materialPlacaSolar);

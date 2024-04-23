@@ -42,7 +42,7 @@ class Cabeza extends THREE.Object3D {
 
       //VIDEO COMO TEXTURA on loop
       let video = document.createElement('video');
-      video.src = '../HUD.mp4';
+      video.src = 'imgs/HUD.mp4';
       video.load();
       video.play();
       video.loop = true;

@@ -1,9 +1,9 @@
 
 import * as THREE from 'three'
 
-import { TextGeometry } from '../../../libs/TextGeometry.js';
-import { FontLoader } from '../../../libs/FontLoader.js';
-import { SphereGeometry } from '../../../libs/three.module.js';
+import { TextGeometry } from 'libs/TextGeometry.js';
+import { FontLoader } from 'libs/FontLoader.js';
+
 
 class Investigacion extends THREE.Object3D {
 
@@ -11,7 +11,7 @@ class Investigacion extends THREE.Object3D {
     super();
     //----------------------------------------------------------------------------------------
 
-    var esferaGeo = new SphereGeometry(1,16,16,0,Math.PI*2);
+    var esferaGeo = new THREE.SphereGeometry(1,16,16,0,Math.PI*2);
     //material transparente
     var materialEsfera = new THREE.MeshBasicMaterial({
       color: 0xff0000, // Color azul
@@ -27,7 +27,7 @@ class Investigacion extends THREE.Object3D {
 
     var mesh = null;
 
-    loader.load('../fonts/helvetiker_regular.typeface.json', function (font) {
+    loader.load('fonts/helvetiker_regular.typeface.json', function (font) {
 
       const geometry = new TextGeometry('+1 pto', {
         font: font,

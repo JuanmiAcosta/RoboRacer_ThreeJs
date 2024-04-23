@@ -1,8 +1,8 @@
 
 import * as THREE from 'three'
 
-import { TextGeometry } from '../../../libs/TextGeometry.js';
-import { FontLoader } from '../../../libs/FontLoader.js';
+import { TextGeometry } from 'libs/TextGeometry.js';
+import { FontLoader } from 'libs/FontLoader.js';
 
 class Tornillos extends THREE.Object3D {
 
@@ -77,7 +77,7 @@ class Tornillos extends THREE.Object3D {
 
     var mesh = null;
 
-    loader.load('../fonts/helvetiker_regular.typeface.json', function (font) {
+    loader.load('fonts/helvetiker_regular.typeface.json', function (font) {
 
       const geometry = new TextGeometry('Robot', {
         font: font,

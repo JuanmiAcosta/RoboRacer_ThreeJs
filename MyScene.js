@@ -1,7 +1,7 @@
 
-import * as THREE from '../libs/three.module.js'
-import { GUI } from '../libs/dat.gui.module.js'
-import { TrackballControls } from '../libs/TrackballControls.js'
+import * as THREE from './libs/three.module.js'
+import { GUI } from './libs/dat.gui.module.js'
+import { TrackballControls } from './libs/TrackballControls.js'
 
 import { Ensamblado } from './modelos/coche_lunar/Ensamblado.js' //Modelo robot principal 
 import { Circuito } from './modelos/circuito/Circuito.js';
@@ -31,7 +31,7 @@ class MyScene extends THREE.Scene {
     //this.prota.add(this.cameraController); //Añadimos la cámara al prota
     this.add(this.prota);
 
-    this.fondo = new THREE.Mesh(new THREE.BoxGeometry(600,600,600), new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('./imgs/fondo.jpg'), side: THREE.DoubleSide }));
+    this.fondo = new THREE.Mesh(new THREE.SphereGeometry(300,300,300), new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide }));
     this.add(this.fondo);
   }
 

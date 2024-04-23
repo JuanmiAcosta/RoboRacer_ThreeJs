@@ -1,8 +1,6 @@
 
 import * as THREE from 'three'
 
-import { BoxGeometry, CylinderGeometry, SphereGeometry } from '../../../libs/three.module.js';
-
 class C_placa extends THREE.Object3D {
 
   constructor() {
@@ -10,7 +8,7 @@ class C_placa extends THREE.Object3D {
 
     //---------------------------------------------------------------------------------------
 
-    var esferaGeo = new SphereGeometry(1,16,16,0,Math.PI*2);
+    var esferaGeo = new THREE.SphereGeometry(1,16,16,0,Math.PI*2);
     //material transparente
     var materialEsfera = new THREE.MeshBasicMaterial({
       color: 0x00ff00, // Color azul
@@ -40,7 +38,7 @@ class C_placa extends THREE.Object3D {
 
     //material con textura
 
-    let texture = new THREE.TextureLoader().load('../imgs/placa.jpg');
+    let texture = new THREE.TextureLoader().load('imgs/placa.jpg');
     let materialPlacaSolar = new THREE.MeshPhongMaterial({ map: texture, side: THREE.DoubleSide});
 
     //extrusión
@@ -59,7 +57,7 @@ class C_placa extends THREE.Object3D {
     //condensadores
     this.padreCondensadores = new THREE.Object3D();
 
-    var condensadorGeo = new CylinderGeometry(0.02,0.02,0.08,16,16);
+    var condensadorGeo = new THREE.CylinderGeometry(0.02,0.02,0.08,16,16);
     condensadorGeo.rotateX(Math.PI/2);
     var material = new THREE.MeshPhongMaterial({color: 0x000000, specular: 0x111111, shininess: 30});
     var condensador = new THREE.Mesh(condensadorGeo, material);
@@ -92,7 +90,7 @@ class C_placa extends THREE.Object3D {
     //resistencias
     this.padreResistencias = new THREE.Object3D();
 
-    var resistenciaGeo = new BoxGeometry(0.02,0.02,0.08);
+    var resistenciaGeo = new THREE.BoxGeometry(0.02,0.02,0.08);
     resistenciaGeo.rotateX(Math.PI/2);
     //marron claro
     var resMat = new THREE.MeshPhongMaterial({color : 0xD2B48C, specular: 0x111111, shininess: 30});
@@ -128,16 +126,14 @@ class C_placa extends THREE.Object3D {
 
     //microchip
 
-    var micro = new BoxGeometry(0.4,0.4,0.03);
-    let texture2 = new THREE.TextureLoader().load('../imgs/micro.jpg');
+    var micro = new THREE.BoxGeometry(0.4,0.4,0.03);
+    let texture2 = new THREE.TextureLoader().load('imgs/micro.jpg');
     let materialMicro = new THREE.MeshPhongMaterial({ map: texture2, side: THREE.DoubleSide});
 
     var microchip = new THREE.Mesh(micro, materialMicro);
     microchip.position.set(0,-0.1,0.05);
 
     this.placa.add(microchip);
-
-
 
     this.add(this.placa);
 

@@ -95,7 +95,7 @@ class Ensamblado extends THREE.Object3D {
     this.up = this.tubo.binormals[segmentoActual];
     this.lookAt(posTmp);
 
-    this.translateY(this.radio+0.5); //Para que el coche no esté enterrado en el suelo
+    this.translateY(this.radio+0.6); //Para que el coche no esté enterrado en el suelo
     
   }
 
