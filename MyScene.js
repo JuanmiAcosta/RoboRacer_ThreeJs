@@ -38,7 +38,6 @@ class MyScene extends THREE.Scene {
     document.addEventListener('keydown', (event) => {
       this.leerEntrada(event);
       this.moverProta();
-
     });
 
     document.addEventListener('keyup', (event) => {
@@ -49,10 +48,13 @@ class MyScene extends THREE.Scene {
     //Crear un map para almacenar tecla y booleano
     this.teclas = new Map();
     this.leerEntrada = (e) => {
-      this.teclas.set(e.key, e.type === 'keydown');
+      if(e.type === 'keydown'){
+        this.teclas.set(e.key,true);
+      }else if(e.type === 'keyup'){
+        this.teclas.set(e.key,false);
+      }
       console.log(this.teclas);
     }
-
   }
 
   createCamera() {
@@ -129,18 +131,22 @@ class MyScene extends THREE.Scene {
     return gui;
   }
 
-  moverProta() {
+  moverProta(){
     if (this.teclas.get('w')) {
-      this.prota.update((this.prota.t + 0.005) % 1, this.prota.alfa);
+      this.prota.update((this.prota.t + 0.0005) % 1, this.prota.alfa);
+      console.log("ADELANTE");
     }
     if (this.teclas.get('a')) {
-      this.prota.update(this.prota.t, (this.prota.alfa - 0.1) % (Math.PI * 2));
+      this.prota.update(this.prota.t, (this.prota.alfa - 0.05) % (Math.PI * 2));
+      console.log("IZQUIERDA");
     }
     if (this.teclas.get('s')) {
-      this.prota.update((this.prota.t - 0.005) % 1, this.prota.alfa);
+      this.prota.update((this.prota.t - 0.0005) % 1, this.prota.alfa);
+      console.log("ATRAS");
     }
     if (this.teclas.get('d')) {
-      this.prota.update(this.prota.t, (this.prota.alfa + 0.1) % (Math.PI * 2));
+      this.prota.update(this.prota.t, (this.prota.alfa + 0.05) % (Math.PI * 2));
+      console.log("DERECHA");
     }
   }
 
@@ -226,6 +232,9 @@ class MyScene extends THREE.Scene {
     if (!this.guiControls.cambia) {
       this.cameraControl.update();
     }
+
+
+    this.moverProta();
 
     requestAnimationFrame(() => this.update());
 
