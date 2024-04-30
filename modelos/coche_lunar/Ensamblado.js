@@ -111,7 +111,7 @@ class Ensamblado extends THREE.Object3D {
     this.padrisimo.up = this.tubo.binormals[segmentoActual];
     this.padrisimo.lookAt(posTmp);
 
-    this.padreTraslation.position.y = (this.radio+0.6); //Para que el coche no esté enterrado en el suelo
+    this.padreTraslation.position.y = (this.radio+1.6); //Para que el coche no esté enterrado en el suelo
 
     this.padreRotation.rotation.z = (alfa);
 
