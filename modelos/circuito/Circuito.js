@@ -9,14 +9,19 @@ class Circuito extends THREE.Object3D {
 
     // Torus knot 
     var torusKnotGeometry = new THREE.TorusKnotGeometry( 100, 10, 80, 20, 1, 5);
-    var normalMaterial = new THREE.MeshNormalMaterial();
+
+    var texture = new THREE.TextureLoader().load("../textures/circuitoT.jpg");
+    texture.wrapS = THREE.MirroredRepeatWrapping;
+    //texture.wrapT = THREE.RepeatWraping;
+
+    var materialCircuito = new THREE.MeshPhongMaterial({map: texture});
 
     // A partir del torius knot hacer un tubeGeometry
     var path = this.getPathFromTorusKnot (torusKnotGeometry);
 
     var tubeGeometry = new THREE.TubeGeometry (path, 60, 20, 60, true);
 
-    var tube = new THREE.Mesh (tubeGeometry, normalMaterial);
+    var tube = new THREE.Mesh (tubeGeometry, materialCircuito);
     this.add (tube);
   }
 
