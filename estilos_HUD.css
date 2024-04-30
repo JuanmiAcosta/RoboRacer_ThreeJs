@@ -19,9 +19,11 @@ body{
 
 .barra_investigacion { /*Arriba centrado*/
     position:absolute;
-    top: 100pxs;
-    width: 100%;
-    height: 50px;
+    top: 50px;
+    /* centrar horizontal */
+    left: 38%;
+    width: 20%;
+    height: auto;
     text-align: center;
     padding-top: 10px;
     margin-top: 10px;
@@ -31,11 +33,31 @@ body{
     color: #fff;
 }
 
+.barra_investigacion .progreso_container{
+    background-color: #fff;
+    width: 100%;
+    height: 25px;
+    display: flex;
+    justify-content:baseline;
+    align-items: center;
+    border: 2px solid #000;
+    border-radius: 25px;
+}
+
+.barra_investigacion .progreso_container .progreso{
+    background-color: #e14c4c;
+    padding : 2px;
+    width: 80%;
+    height: 20px;
+    border: 2px solid #000;
+    border-radius: 25px;
+}
+
 .barra_vidas {
     position:absolute;
-    bottom : 100px;
-    left : 100px;
-    width: 400px;
+    bottom : 200px;
+    left : 150px;
+    width: 420px;
     height: 50px;
     text-align: center;
     padding-top: 10px;
@@ -44,6 +66,23 @@ body{
 
 .barra_vidas h2 {
     color: #fff;
+}
+
+.vida_container{
+    height: 50px;
+    width:100%;
+    border: 3px solid #fff;
+    border-radius: 25px;
+    display: flex;
+    justify-content: baseline;
+    align-items: center;
+}
+
+.vida {
+    width:50px;
+    aspect-ratio: 1/1;
+    box-shadow: inset;
+    margin:10px;
 }
 
 .mision {
