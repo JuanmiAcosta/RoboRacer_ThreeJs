@@ -31,7 +31,7 @@ class MyScene extends THREE.Scene {
     //this.prota.add(this.cameraController); //Añadimos la cámara al prota
     this.add(this.prota);
 
-    this.fondo = new THREE.Mesh(new THREE.SphereGeometry(300, 300, 300), new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide }));
+    this.fondo = new THREE.Mesh(new THREE.SphereGeometry(400, 400, 400), new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide }));
     this.add(this.fondo);
 
     // Escuchar eventos de teclado
@@ -59,7 +59,7 @@ class MyScene extends THREE.Scene {
 
   createCamera() {
 
-    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 800);
+    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000);
 
     this.camera.position.set(0, 0, 200);
     var look = new THREE.Vector3(0, 0, 0);
