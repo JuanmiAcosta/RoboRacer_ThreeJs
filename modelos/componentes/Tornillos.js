@@ -1,20 +1,29 @@
 
 import * as THREE from 'three'
-
-import { TextGeometry } from 'libs/TextGeometry.js';
-import { FontLoader } from 'libs/FontLoader.js';
+import { TextGeometry } from '../libs/TextGeometry.js';
+import { FontLoader } from '../libs/FontLoader.js';
 
 class Tornillos extends THREE.Object3D {
 
-  constructor() {
+  constructor(gui, titleGui) {
     super();
 
+    //-----------------------------------------------------------------------------------
+
+    this.createGUI(gui, titleGui);
     //----------------------------------------------------------------------------------------
+
+    //MATERIAL CON RELIEVE
+    const material = new THREE.MeshPhongMaterial({color: 0xAAAAAA, roughness: 0.2, metalness: 0.8, side: THREE.DoubleSide});
+
+    const bumpTexture = new THREE.TextureLoader().load('../textures/bumpmapmetal.jpg')
+    material.bumpMap = bumpTexture
+    material.bumpScale = 10
+
 
     // Cilindro
     var cilindroGeo = new THREE.CylinderGeometry(0.5,0.5,0.3,6,66);
-    var cilindroMat = new THREE.MeshPhongMaterial({color: 0xAAAAAA, specular: 0x111111, shininess: 30});
-    var cilindro = new THREE.Mesh(cilindroGeo, cilindroMat);
+    var cilindro = new THREE.Mesh(cilindroGeo, material);
 
     this.add(cilindro);
 
@@ -25,8 +34,7 @@ class Tornillos extends THREE.Object3D {
     points.push(new THREE.Vector2(0,-1.2));
 
     var revGeo = new THREE.LatheGeometry(points, 66);
-    var revMat = new THREE.MeshPhongMaterial({side: THREE.DoubleSide,color: 0xAAAAAA, specular: 0x111111, shininess: 30});
-    var meshRev = new THREE.Mesh(revGeo, revMat);
+    var meshRev = new THREE.Mesh(revGeo, material);
 
     this.add(meshRev);
 
@@ -65,9 +73,7 @@ class Tornillos extends THREE.Object3D {
     var extrudeGeo = new THREE.ExtrudeGeometry(shape, extrudeSettings);
     extrudeGeo.rotateX(Math.PI/2);
 
-    var extrudeMat = new THREE.MeshPhongMaterial({color: 0xAAAAAA, specular: 0x111111, shininess: 30});
-
-    var extrude = new THREE.Mesh(extrudeGeo, extrudeMat);
+    var extrude = new THREE.Mesh(extrudeGeo, material);
 
     this.add(extrude);
 
@@ -77,7 +83,7 @@ class Tornillos extends THREE.Object3D {
 
     var mesh = null;
 
-    loader.load('fonts/helvetiker_regular.typeface.json', function (font) {
+    loader.load('../fonts/helvetiker_regular.typeface.json', function (font) {
 
       const geometry = new TextGeometry('Robot', {
         font: font,
@@ -94,8 +100,6 @@ class Tornillos extends THREE.Object3D {
       geometry.translate(-1.8,-0.1,0);
       geometry.scale(0.2,0.2,0.2);
       
-
-      var material = new THREE.MeshPhongMaterial({ color: 0xAAAAAA, specular: 0xAAAAAA, shininess: 70});
       mesh = new THREE.Mesh(geometry, material);
 
       // Añadir mesh a la escena dentro de la función de callback
@@ -107,6 +111,18 @@ class Tornillos extends THREE.Object3D {
 
     this.scale.set(0.7,0.7,0.7);
  
+  }
+
+  createGUI(gui, titleGui) {
+    // Controles para el movimiento de la parte móvil
+    this.guiControls = {
+
+    }
+
+    // Se crea una sección para los controles de la caja
+    var folder = gui.addFolder(titleGui);
+    // Estas lineas son las que añaden los componentes de la interfaz
+    // Las tres cifras indican un valor mínimo, un máximo y el incremento
   }
 
   update() {
