@@ -11,8 +11,9 @@ class Circuito extends THREE.Object3D {
     var torusKnotGeometry = new THREE.TorusKnotGeometry( 100, 10, 80, 20, 1, 5);
 
     var texture = new THREE.TextureLoader().load("../textures/circuitoT.jpg");
-    texture.wrapS = THREE.MirroredRepeatWrapping;
-    //texture.wrapT = THREE.RepeatWraping;
+    texture.wrapS=THREE.RepeatWrapping;
+    texture.wrapT=THREE.RepeatWrapping;
+    texture.repeat.set(10,3);
 
     var materialCircuito = new THREE.MeshPhongMaterial({map: texture});
 
