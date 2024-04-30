@@ -7,25 +7,43 @@
     <meta charset="utf-8">
     <script type="text/javascript" src="../libs/jquery.js"></script>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jersey+15&display=swap" rel="stylesheet">
+
     <script type="importmap">
           { "imports": { "three": "../libs/three.module.js" } }
     </script>
 
     <script type="module" src="./MyScene.js"></script>
+    <script type="module" src="./funciones_HUD.js"></script>
     <style>
         body {
             margin: 0;
             overflow: hidden;
         }
-
     </style>
+     <link rel="stylesheet" href="estilos_HUD.css">
 </head>
 
 <body>
 
     <!-- Div which will hold the Output -->
     <div id="WebGL-output">
+        <!--HUD DE VIDA-->
+        <div class="barra_investigacion">
+            <h2>Barra de investigación:</h2>
+            <div class="progreso"></div>
+        </div>
+        <div class="barra_vidas">
+            <h2>Barra de vida:</h2>
+        </div>
+        <div class="mision">
+            <p>La misión consiste en terminar las tres vueltas del circuito habiendo completado la barra de
+                investigación. Confiamos en ti.</p>
+        </div>
     </div>
+
 </body>
 
 </html>
