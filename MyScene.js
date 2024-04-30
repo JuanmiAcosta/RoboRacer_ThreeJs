@@ -78,7 +78,7 @@ class MyScene extends THREE.Scene {
   createCameraThirdPerson() {
 
     this.cameraController = new THREE.Object3D();
-    this.cameraController.position.set(0, 20, -16);
+    this.cameraController.position.set(0, 30, -19);
     this.cameraController.rotateY(Math.PI);
     this.cameraController.rotateX(-Math.PI / 8);
 

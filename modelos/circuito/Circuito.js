@@ -8,13 +8,13 @@ class Circuito extends THREE.Object3D {
     //----------------------------------------------------------------------------------------
 
     // Torus knot 
-    var torusKnotGeometry = new THREE.TorusKnotGeometry( 50, 10, 60, 20, 1, 5);
+    var torusKnotGeometry = new THREE.TorusKnotGeometry( 100, 10, 80, 20, 1, 5);
     var normalMaterial = new THREE.MeshNormalMaterial();
 
     // A partir del torius knot hacer un tubeGeometry
     var path = this.getPathFromTorusKnot (torusKnotGeometry);
 
-    var tubeGeometry = new THREE.TubeGeometry (path, 60, 10, 60, true);
+    var tubeGeometry = new THREE.TubeGeometry (path, 60, 20, 60, true);
 
     var tube = new THREE.Mesh (tubeGeometry, normalMaterial);
     this.add (tube);
