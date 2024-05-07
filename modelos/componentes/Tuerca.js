@@ -1,7 +1,7 @@
 
 import * as THREE from 'three'
 
-import { CSG } from '../libs/CSG-v2.js'
+import { CSG } from '../../libs/CSG-v2.js'
 
 class Tuerca extends THREE.Object3D {
 

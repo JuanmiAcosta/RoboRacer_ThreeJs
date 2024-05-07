@@ -1,14 +1,22 @@
 
 import * as THREE from 'three'
 
-import { TextGeometry } from '../libs/TextGeometry.js';
-import { FontLoader } from '../libs/FontLoader.js';
-import { SphereGeometry } from '../libs/three.module.js';
+import { TextGeometry } from '../../libs/TextGeometry.js';
+import { FontLoader } from '../../libs/FontLoader.js';
+import { SphereGeometry } from '../../libs/three.module.js';
 
 class Investigacion extends THREE.Object3D {
 
-  constructor() {
+  constructor(tuboMesh, t , alfa ) {
     super();
+
+    this.t = t;
+    this.alfa = alfa;
+
+    var geomTubo = tuboMesh.geometry;
+
+    this.ensamblado = new THREE.Object3D();
+
     //----------------------------------------------------------------------------------------
 
     var esferaGeo = new SphereGeometry(1,16,16,0,Math.PI*2);
@@ -25,7 +33,7 @@ class Investigacion extends THREE.Object3D {
 
     var esfera = new THREE.Mesh(esferaGeo, materialEsfera);
 
-    this.add(esfera);
+    this.ensamblado.add(esfera);
     //----------------------------------------------------------------------------------------
     const loader = new FontLoader();
 
@@ -52,14 +60,49 @@ class Investigacion extends THREE.Object3D {
       mesh = new THREE.Mesh(geometry, material);
 
       // Añadir mesh a la escena dentro de la función de callback
-      this.add(mesh);
+      this.ensamblado.add(mesh);
     }.bind(this)); // Asegúrate de que 'this' se refiere al objeto correcto
 
-    
+    // TUBO --------------------------------------------------------------------------------------------
+    // El constructor del personaje recibe la geometria del Tubo para extraer información necesaria
+    this.tubo = geomTubo;
+    this.path = geomTubo.parameters.path;
+    this.radio = geomTubo.parameters.radius;
+    this.segmentos = geomTubo.parameters.tubularSegments;
+
+    this.padreTraslation = new THREE.Object3D();
+    this.padreTraslation.add(this.ensamblado);
+
+    this.padreRotation = new THREE.Object3D();
+    this.padreRotation.add(this.padreTraslation);
+
+    this.padrisimo = new THREE.Object3D();
+    this.padrisimo.add(this.padreRotation);
+
+    this.add(this.padrisimo);
+
+    this.update(t,alfa);
   }
 
-  update() {
-    // No hay nada que actualizar ya que la apertura de la grapadora se ha actualizado desde la interfaz
+  update(t,alfa) {
+    
+    var posTmp = this.path.getPointAt(t);
+    this.padrisimo.position.copy(posTmp);
+    // Para l a o r i e n t a c i ón necesitamos l a tangente y l a binormal del tubo en esa p o s i c i ón
+    // también los extraemos del camino y tubo respectivamente
+    var tangente = this.path.getTangentAt(t);
+    posTmp.add(tangente);
+    var segmentoActual = Math.floor(t * this.segmentos);
+    this.padrisimo.up = this.tubo.binormals[segmentoActual];
+    this.padrisimo.lookAt(posTmp);
+
+    this.padreTraslation.position.y = (this.radio+1.6); //Para que el coche no esté enterrado en el suelo
+
+    this.padreRotation.rotation.z = (alfa);
+
+    this.t = t;
+    this.alfa = alfa;
+    
   }
 
 }

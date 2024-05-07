@@ -1,4 +1,4 @@
-import * as THREE from 'libs/three.module.js'//Se importa la biblioteca three.module.js
+import * as THREE from 'three'//Se importa la biblioteca three.module.js
 
 class Plancton extends THREE.Object3D {
   //Constructor de la clase MyBox

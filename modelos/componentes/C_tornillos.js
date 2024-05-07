@@ -3,7 +3,6 @@ import * as THREE from 'three'
 
 import { Tornillos } from './Tornillos.js'
 import { Tuerca } from './Tuerca.js'
-import { SphereGeometry } from '../libs/three.module.js';
 
 class C_tornillos extends THREE.Object3D {
 
@@ -21,7 +20,7 @@ class C_tornillos extends THREE.Object3D {
     this.add(tornillo);
     this.add(tuerca);
 
-    var esferaGeo = new SphereGeometry(1,16,16,0,Math.PI*2);
+    var esferaGeo = new THREE.SphereGeometry(1,16,16,0,Math.PI*2);
     //material transparente
     var materialEsfera = new THREE.MeshPhongMaterial({
       color: 0x0000ff, // Color azul

@@ -1,12 +1,20 @@
-import * as THREE from 'libs/three.module.js'//Se importa la biblioteca three.module.js
-
-import {CSG} from 'libs/CSG-v2.js'
+import * as THREE from 'three'//Se importa la biblioteca three.module.js
+import {CSG} from '../../libs/CSG-v2.js'
 import { Plancton } from './plancton.js'
  
 class Ovni extends THREE.Object3D { 
   //Constructor de la clase MyBox
-  constructor() {
+  constructor(tuboMesh, t , alfa ) {
     super();
+
+    this.t = t;
+    this.alfa = alfa;
+
+    var geomTubo = tuboMesh.geometry;
+
+    this.ensamblado = new THREE.Object3D();
+
+    //---------------
 
     this.padreCannon1 = new THREE.Object3D();
     this.padreCannon2 = new THREE.Object3D();
@@ -27,22 +35,45 @@ class Ovni extends THREE.Object3D {
     this.padreCannon2.position.y=-1.5;
 
     //Añadimos el plancton a la escena y lo colocamos
-    this.plancton = new Plancton(gui, "Controles Plancton");
+    this.plancton = new Plancton();
     this.plancton.scale.set(0.23,0.23,0.23);
     this.plancton.position.y = 0.25;
     this.plancton.position.z = -0.4;
 
     //Añadimos el resto de elementos y obtenemos el ovni final
+    var luces = new THREE.Object3D();
     this.light.forEach(light => {
       light.scale.set(0.5, 0.5, 0.5);
-      this.add(light);
+      luces.add(light);
     });
-    this.add(this.padreCannon1);
-    this.add(this.padreCannon2);
-    this.add(this.plancton);
-    this.add(this.ovni);
-    this.add(this.light);
-    this.add(this.headFinal);
+
+    this.ensamblado.add(this.padreCannon1);
+    this.ensamblado.add(this.padreCannon2);
+    this.ensamblado.add(this.plancton);
+    this.ensamblado.add(this.ovni);
+    this.ensamblado.add(luces);
+    this.ensamblado.add(this.headFinal);
+    this.ensamblado.rotateY(Math.PI);
+
+    // TUBO --------------------------------------------------------------------------------------------
+    // El constructor del personaje recibe la geometria del Tubo para extraer información necesaria
+    this.tubo = geomTubo;
+    this.path = geomTubo.parameters.path;
+    this.radio = geomTubo.parameters.radius;
+    this.segmentos = geomTubo.parameters.tubularSegments;
+
+    this.padreTraslation = new THREE.Object3D();
+    this.padreTraslation.add(this.ensamblado);
+
+    this.padreRotation = new THREE.Object3D();
+    this.padreRotation.add(this.padreTraslation);
+
+    this.padrisimo = new THREE.Object3D();
+    this.padrisimo.add(this.padreRotation);
+
+    this.add(this.padrisimo);
+
+    this.update(t,alfa);
   }
 
   createOvni(){
@@ -133,7 +164,24 @@ class Ovni extends THREE.Object3D {
     this.cannon2.position.z=1;
   }
 
-  update () {
+  update(t,alfa) {
+    
+    var posTmp = this.path.getPointAt(t);
+    this.padrisimo.position.copy(posTmp);
+    // Para l a o r i e n t a c i ón necesitamos l a tangente y l a binormal del tubo en esa p o s i c i ón
+    // también los extraemos del camino y tubo respectivamente
+    var tangente = this.path.getTangentAt(t);
+    posTmp.add(tangente);
+    var segmentoActual = Math.floor(t * this.segmentos);
+    this.padrisimo.up = this.tubo.binormals[segmentoActual];
+    this.padrisimo.lookAt(posTmp);
+
+    this.padreTraslation.position.y = (this.radio+6); //Para que el coche no esté enterrado en el suelo
+
+    this.padreRotation.rotation.z = (alfa);
+
+    this.t = t;
+    this.alfa = alfa;
     
   }
 }

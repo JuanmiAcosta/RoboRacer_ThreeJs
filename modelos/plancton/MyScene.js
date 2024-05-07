@@ -67,6 +67,7 @@ class MyScene extends THREE.Scene { //MyScene hereda de THREE.Scene
     
     this.stats = stats;
   }
+
   
   createCamera () {
     // Para crear una cámara le indicamos

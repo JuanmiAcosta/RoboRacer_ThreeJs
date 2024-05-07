@@ -1,15 +1,4 @@
-/*
-<div class="barra_investigacion">
-    <h2>Barra de investigación:</h2>
-</div>
-<div class="barra_vidas">
-    <h2>Barra de vida:</h2>
-</div>
-<div class="mision">
-    <p>La misión consiste en terminar las tres vueltas del circuito habiendo completado la barra de
-        investigación. Confiamos en ti.</p>
-</div>
-*/
+
 body{
     font-family: "Jersey 15", sans-serif;
     font-weight: 300;
@@ -47,7 +36,7 @@ body{
 .barra_investigacion .progreso_container .progreso{
     background-color: #e14c4c;
     padding : 2px;
-    width: 80%;
+    width: 0%;
     height: 20px;
     border: 2px solid #000;
     border-radius: 25px;

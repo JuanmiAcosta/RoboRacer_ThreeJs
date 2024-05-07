@@ -5,6 +5,13 @@ import { TrackballControls } from './libs/TrackballControls.js'
 
 import { Ensamblado } from './modelos/coche_lunar/Ensamblado.js' //Modelo robot principal 
 import { Circuito } from './modelos/circuito/Circuito.js';
+import { Plancton } from './modelos/plancton/plancton.js';
+import { Ovni } from './modelos/ovni/ovni.js';
+import { Investigacion } from './modelos/Item_investigación/Investigacion.js';
+import { C_placa } from './modelos/componentes/C_placa.js';
+import { C_tornillos } from './modelos/componentes/C_tornillos.js';
+
+import { HUD } from './funciones_HUD.js'
 
 class MyScene extends THREE.Scene {
 
@@ -20,19 +27,44 @@ class MyScene extends THREE.Scene {
     this.createCamera();
     this.createCameraThirdPerson();
 
-    // this.axis = new THREE.AxesHelper(1);
-    // this.axis.position.set(0, 0, 0);
-    // this.add(this.axis);
+    //variables para colisiones
+    this.objetosACOlisionar;
+    this.premiosACOlisionar;
+    this.recienCOlisionado=null;
 
     this.circuito = new Circuito();
     this.add(this.circuito);
 
     this.prota = new Ensamblado(this.circuito.children[0]);
-    //this.prota.add(this.cameraController); //Añadimos la cámara al prota
+    this.cajaProta = new THREE.Box3().setFromObject(this.prota);
     this.add(this.prota);
 
-    this.fondo = new THREE.Mesh(new THREE.SphereGeometry(400, 400, 400), new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide }));
+    this.fondo = new THREE.Mesh(new THREE.SphereGeometry(600, 600, 600), new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide }));
     this.add(this.fondo);
+
+    // Ejemplo enemigo
+
+    // INICIALIZAMOS ARRAY DE OBJETOS A COLISIONAR (ENEMIGOS)
+    this.enemigosAColisionar = [];
+    // this.plancton = new Plancton(this.circuito.children[0], 0.6 ,0);
+    // this.cajaPlancton = new THREE.Box3().setFromObject(this.plancton);
+    // this.add(this.plancton);
+    // this.objetosACOlisionar = [this.cajaPlancton];
+
+    this.colocarEnemigos();
+    this.colocarPremios();
+
+    //PARA VISUALIZAR LAS CAJAS DE COLISION
+
+    // var caja1 = new THREE.Box3Helper(this.cajaProta, 0xffff00);
+    // this.add(caja1);
+    // var caja2 = new THREE.Box3Helper(this.cajaPlancton, 0xffff00);
+    // this.add(caja2);
+
+    // caja1.visible = true;
+    // caja2.visible = true;
+
+    //----------------------------------------------------------------
 
     // Escuchar eventos de teclado
     document.addEventListener('keydown', (event) => {
@@ -45,23 +77,56 @@ class MyScene extends THREE.Scene {
       this.moverProta();
     });
 
+    document.addEventListener('keydown', (event) => {
+      //Barra espaciadora -> 
+      if (event.code === 'Space') {
+        this.guiControls.cambia = !this.guiControls.cambia;
+        this.cambiaCamara();
+      }
+    });
+
     //Crear un map para almacenar tecla y booleano
     this.teclas = new Map();
     this.leerEntrada = (e) => {
-      if(e.type === 'keydown'){
-        this.teclas.set(e.key,true);
-      }else if(e.type === 'keyup'){
-        this.teclas.set(e.key,false);
+      if (e.type === 'keydown') {
+        this.teclas.set(e.key, true);
+      } else if (e.type === 'keyup') {
+        this.teclas.set(e.key, false);
       }
-      console.log(this.teclas);
+      //console.log(this.teclas);
     }
+  }
+
+  colocarEnemigos() {
+
+    for (var i = 0; i < 10; i++) {
+      //Generar un numero aleatorio entre 0 y 1
+      var aleatorio = Math.random();
+      var plancton = new Plancton(this.circuito.children[0], (aleatorio*i) % 1, (i * aleatorio) % (Math.PI * 2));
+      this.cajaPlancton = new THREE.Box3().setFromObject(plancton);
+      this.add(plancton);
+      this.enemigosAColisionar.push(this.cajaPlancton);
+    }
+
+    for (var i = 0; i < 10; i++) {
+      //Generar un numero aleatorio entre 0 y 1
+      var aleatorio = Math.random();
+      var ovni = new Ovni(this.circuito.children[0], (aleatorio*i) % 1, (i * aleatorio) % (Math.PI * 2));
+      this.cajaOvni = new THREE.Box3().setFromObject(ovni);
+      this.add(ovni);
+      this.enemigosAColisionar.push(this.cajaOvni);
+    }
+
+  }
+
+  colocarPremios() {
   }
 
   createCamera() {
 
-    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000);
+    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 2000);
 
-    this.camera.position.set(0, 0, 200);
+    this.camera.position.set(0, 0, 450);
     var look = new THREE.Vector3(0, 0, 0);
     this.camera.lookAt(look);
     this.add(this.camera);
@@ -80,12 +145,26 @@ class MyScene extends THREE.Scene {
     this.cameraController = new THREE.Object3D();
     this.cameraController.position.set(0, 30, -19);
     this.cameraController.rotateY(Math.PI);
-    this.cameraController.rotateX(-Math.PI / 8);
+    this.cameraController.rotateX(-Math.PI / 12);
 
-    this.camera2 = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 600);
+    this.camera2 = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000);
 
     this.cameraController.add(this.camera2);
     this.cameraController.add(this.iluminacionProta);
+  }
+
+  colisionaEnemigo(objetosAColisionar){
+    var colision = false;
+    for (var i = 0; i < this.enemigosAColisionar.length; i++) {
+      if (this.cajaProta.intersectsBox(this.enemigosAColisionar[i])) {
+        if (this.recienCOlisionado != this.enemigosAColisionar[i]){
+          this.recienCOlisionado = this.enemigosAColisionar[i];
+          colision = true;
+        }
+        return colision;
+      }
+    }
+    return colision;
   }
 
   createGUI() {
@@ -131,24 +210,30 @@ class MyScene extends THREE.Scene {
     return gui;
   }
 
-  moverProta(){
+  moverProta() {
     if (this.teclas.get('w')) {
       this.prota.update((this.prota.t + 0.0005) % 1, this.prota.alfa);
-      console.log("ADELANTE");
+      //Movemos las cajas de colision
+      this.cajaProta.setFromObject(this.prota);
+      //console.log("ADELANTE");
     }
     if (this.teclas.get('a')) {
-      this.prota.update(this.prota.t, (this.prota.alfa - 0.05) % (Math.PI * 2));
-      console.log("IZQUIERDA");
+      this.prota.update(this.prota.t, (this.prota.alfa - 0.01) % (Math.PI * 2));
+      this.cajaProta.setFromObject(this.prota);
+      //console.log("IZQUIERDA");
     }
     if (this.teclas.get('s')) {
       this.prota.update((this.prota.t - 0.0005) % 1, this.prota.alfa);
-      console.log("ATRAS");
+      this.cajaProta.setFromObject(this.prota);
+      //console.log("ATRAS");
     }
     if (this.teclas.get('d')) {
-      this.prota.update(this.prota.t, (this.prota.alfa + 0.05) % (Math.PI * 2));
-      console.log("DERECHA");
+      this.prota.update(this.prota.t, (this.prota.alfa + 0.01) % (Math.PI * 2));
+      this.cajaProta.setFromObject(this.prota);
+      //console.log("DERECHA");
     }
   }
+
 
   cambiaCamara() {
     if (this.guiControls.cambia) {
@@ -220,9 +305,27 @@ class MyScene extends THREE.Scene {
 
   onWindowResize() {
 
-    this.setCameraAspect(window.innerWidth / window.innerHeight);
+    if (this.guiControls.cambia) {
 
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
+      var camara = this.camera2;
+      var nuevaRatio = window.innerWidth / window.innerHeight;
+
+      camara.aspect = nuevaRatio;
+
+      camara.updateProjectionMatrix();
+      this.renderer.setSize(window.innerWidth, window.innerHeight);
+
+    } else {
+
+      var camara = this.camara;
+      var nuevaRatio = window.innerWidth / window.innerHeight;
+
+      camara.aspect = nuevaRatio;
+
+      camara.updateProjectionMatrix();
+      this.renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
   }
 
   update() {
@@ -233,8 +336,13 @@ class MyScene extends THREE.Scene {
       this.cameraControl.update();
     }
 
-
     this.moverProta();
+    
+    if (this.colisionaEnemigo(this.objetosACOlisionar)) {
+      console.log("COLISION");
+      HUD.restarVida();
+
+    }
 
     requestAnimationFrame(() => this.update());
 
