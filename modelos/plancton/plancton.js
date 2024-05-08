@@ -81,7 +81,7 @@ class Plancton extends THREE.Object3D {
     this.padre.add(this.padreBrazo2);
     this.padre.position.z = 2;
 
-    this.padre.scale.set(0.5, 0.5, 0.5);
+    this.padre.scale.set(0.3, 0.3, 0.3);
     this.padre.rotation.y = Math.PI;
     this.padre.translateY(3.4);
 
@@ -297,7 +297,7 @@ class Plancton extends THREE.Object3D {
     this.padrisimo.up = this.tubo.binormals[segmentoActual];
     this.padrisimo.lookAt(posTmp);
 
-    this.padreTraslation.position.y = (this.radio+1.4); //Para que el coche no esté enterrado en el suelo
+    this.padreTraslation.position.y = (this.radio-0.3); //Para que el coche no esté enterrado en el suelo
 
     this.padreRotation.rotation.z = (alfa);
 

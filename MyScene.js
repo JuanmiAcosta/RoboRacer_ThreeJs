@@ -36,7 +36,9 @@ class MyScene extends THREE.Scene {
     this.add(this.circuito);
 
     this.prota = new Ensamblado(this.circuito.children[0]);
-    this.cajaProta = new THREE.Box3().setFromObject(this.prota);
+    this.padreNoTransformable = new THREE.Object3D();
+    this.padreNoTransformable = this.prota.children[0].children[0];
+    this.cajaProta = new THREE.Box3().setFromObject(this.padreNoTransformable);
     this.add(this.prota);
 
     this.fondo = new THREE.Mesh(new THREE.SphereGeometry(600, 600, 600), new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide }));
@@ -250,35 +252,28 @@ class MyScene extends THREE.Scene {
   moverProta() {
     if (this.teclas.get('w')) {
       this.prota.update((this.prota.t + this.VELOCIDAD) % 1, this.prota.alfa);
-      //Movemos las cajas de colision
-      this.cajaProta.setFromObject(this.prota);
-      //console.log("ADELANTE");
     }
     if (this.teclas.get('a')) {
       this.prota.update(this.prota.t, (this.prota.alfa - 0.03) % (Math.PI * 2));
-      this.cajaProta.setFromObject(this.prota);
-      //console.log("IZQUIERDA");
     }
      if (this.teclas.get('s')) {
        this.prota.update((this.prota.t - this.VELOCIDAD) % 1, this.prota.alfa);
-       this.cajaProta.setFromObject(this.prota);
-       //console.log("ATRAS");
      }
     if (this.teclas.get('d')) {
       this.prota.update(this.prota.t, (this.prota.alfa + 0.03) % (Math.PI * 2));
-      this.cajaProta.setFromObject(this.prota);
-      //console.log("DERECHA");
     }
+
+    this.cajaProta.setFromObject(this.padreNoTransformable);
   }
  
 
   cambiaCamara() {
     if (this.guiControls.cambia) {
       this.remove(this.camera);
-      this.prota.children[0].children[0].add(this.cameraController);
+      this.padreNoTransformable.add(this.cameraController);
     } else {
       this.prota.children[0].children[0].remove(this.cameraController);
-      this.add(this.camera);
+      this.padreNoTransformable.add(this.camera);
     }
   }
 

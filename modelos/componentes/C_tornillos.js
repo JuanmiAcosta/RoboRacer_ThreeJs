@@ -41,7 +41,7 @@ class C_tornillos extends THREE.Object3D {
     this.ensamblado.add(esfera);
 
     this.ensamblado.position.set (-1.2,0,0);
-    this.ensamblado.scale.set(2.5,2.5,2.5);
+    this.ensamblado.scale.set(3,3,3);
     this.ensamblado.rotation.y = Math.PI/2;
 
     // TUBO --------------------------------------------------------------------------------------------
@@ -78,7 +78,7 @@ class C_tornillos extends THREE.Object3D {
     this.padrisimo.up = this.tubo.binormals[segmentoActual];
     this.padrisimo.lookAt(posTmp);
 
-    this.padreTraslation.position.y = (this.radio+2); //Para que el coche no esté enterrado en el suelo
+    this.padreTraslation.position.y = (this.radio+2.5); //Para que el coche no esté enterrado en el suelo
 
     this.padreRotation.rotation.z = (alfa);
 
