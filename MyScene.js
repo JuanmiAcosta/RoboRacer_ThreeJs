@@ -37,7 +37,7 @@ class MyScene extends THREE.Scene {
 
     this.prota = new Ensamblado(this.circuito.children[0]);
     this.padreNoTransformable = new THREE.Object3D();
-    this.padreNoTransformable = this.prota.children[0].children[0].children[0].children[0];
+    this.padreNoTransformable = this.prota;
     this.padreCamara = this.prota.children[0].children[0];
     this.cajaProta = new THREE.Box3().setFromObject(this.padreNoTransformable);
     this.add(this.prota);
@@ -102,7 +102,7 @@ class MyScene extends THREE.Scene {
 
     //Crear un map para almacenar tecla y booleano
     this.teclas = new Map();
-    this.leerEntrada = (e) => {
+    this. leerEntrada = (e) => {
       if (e.type === 'keydown') {
         this.teclas.set(e.key, true);
       } else if (e.type === 'keyup') {
@@ -265,6 +265,8 @@ class MyScene extends THREE.Scene {
     }
 
     this.cajaProta.setFromObject(this.padreNoTransformable);
+    this.cajaProta.expandByScalar(-1);
+
   }
  
 
