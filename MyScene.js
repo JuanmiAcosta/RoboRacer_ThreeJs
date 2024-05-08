@@ -37,7 +37,8 @@ class MyScene extends THREE.Scene {
 
     this.prota = new Ensamblado(this.circuito.children[0]);
     this.padreNoTransformable = new THREE.Object3D();
-    this.padreNoTransformable = this.prota.children[0].children[0];
+    this.padreNoTransformable = this.prota.children[0].children[0].children[0].children[0];
+    this.padreCamara = this.prota.children[0].children[0];
     this.cajaProta = new THREE.Box3().setFromObject(this.padreNoTransformable);
     this.add(this.prota);
 
@@ -270,10 +271,10 @@ class MyScene extends THREE.Scene {
   cambiaCamara() {
     if (this.guiControls.cambia) {
       this.remove(this.camera);
-      this.padreNoTransformable.add(this.cameraController);
+      this.padreCamara.add(this.cameraController);
     } else {
       this.prota.children[0].children[0].remove(this.cameraController);
-      this.padreNoTransformable.add(this.camera);
+      this.padreCamara.add(this.camera);
     }
   }
 
