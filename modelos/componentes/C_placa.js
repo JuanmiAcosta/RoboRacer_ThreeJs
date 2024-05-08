@@ -3,12 +3,15 @@ import * as THREE from 'three'
 
 class C_placa extends THREE.Object3D {
 
-  constructor(gui, titleGui) {
+  constructor(tuboMesh, t , alfa) {
     super();
 
-    //-----------------------------------------------------------------------------------
+    this.t = t;
+    this.alfa = alfa;
 
-    this.createGUI(gui, titleGui);
+    var geomTubo = tuboMesh.geometry;
+
+    this.ensamblado = new THREE.Object3D();
     //---------------------------------------------------------------------------------------
 
     var esferaGeo = new THREE.SphereGeometry(1,16,16,0,Math.PI*2);
@@ -25,7 +28,7 @@ class C_placa extends THREE.Object3D {
 
     var esfera = new THREE.Mesh(esferaGeo, materialEsfera);
 
-    this.add(esfera);
+    this.ensamblado.add(esfera);
 
     //Placa
     //shape de la forma
@@ -67,7 +70,7 @@ class C_placa extends THREE.Object3D {
     //condensadores
     this.padreCondensadores = new THREE.Object3D();
 
-    var condensadorGeo = new THREE.ylinderGeometry(0.02,0.02,0.08,16,16);
+    var condensadorGeo = new THREE.CylinderGeometry(0.02,0.02,0.08,16,16);
     condensadorGeo.rotateX(Math.PI/2);
     var material = new THREE.MeshPhongMaterial({color: 0x000000, specular: 0x111111, shininess: 30});
     var condensador = new THREE.Mesh(condensadorGeo, material);
@@ -91,11 +94,11 @@ class C_placa extends THREE.Object3D {
     condensador5.position.set(0.47,-0.4,0.05);
     this.padreCondensadores.add(condensador5);
 
-    this.add(this.padreCondensadores);
+    this.ensamblado.add(this.padreCondensadores);
 
     this.padreCondensadores2 = this.padreCondensadores.clone();
     this.padreCondensadores2.position.set(-0.8,0.3,0);
-    this.add(this.padreCondensadores2);
+    this.ensamblado.add(this.padreCondensadores2);
 
     //resistencias
     this.padreResistencias = new THREE.Object3D();
@@ -126,11 +129,11 @@ class C_placa extends THREE.Object3D {
     this.padreResistencias.add(resistencia5);
 
     this.padreResistencias.position.set(0.5,0,0);
-    this.add(this.padreResistencias);
+    this.ensamblado.add(this.padreResistencias);
 
     this.padreResistencias2 = this.padreResistencias.clone();
     this.padreResistencias2.position.set(0.3,0.7,0);
-    this.add(this.padreResistencias2);
+    this.ensamblado.add(this.padreResistencias2);
 
     
 
@@ -145,31 +148,56 @@ class C_placa extends THREE.Object3D {
 
     this.placa.add(microchip);
 
-
-
-    this.add(this.placa);
-
+    this.ensamblado.add(this.placa);
 
     //----------------------------------------------------------------------------------------
 
     this.position.set (+1.2,0,0);
 
+    this.ensamblado.scale.set(3,3,3);
+    this.ensamblado.rotation.y = Math.PI/2;
+
+    // TUBO --------------------------------------------------------------------------------------------
+    // El constructor del personaje recibe la geometria del Tubo para extraer información necesaria
+    this.tubo = geomTubo;
+    this.path = geomTubo.parameters.path;
+    this.radio = geomTubo.parameters.radius;
+    this.segmentos = geomTubo.parameters.tubularSegments;
+
+    this.padreTraslation = new THREE.Object3D();
+    this.padreTraslation.add(this.ensamblado);
+
+    this.padreRotation = new THREE.Object3D();
+    this.padreRotation.add(this.padreTraslation);
+
+    this.padrisimo = new THREE.Object3D();
+    this.padrisimo.add(this.padreRotation);
+
+    this.add(this.padrisimo);
+
+    this.update(t,alfa);
+
   }
 
-  createGUI(gui, titleGui) {
-    // Controles para el movimiento de la parte móvil
-    this.guiControls = {
+  update(t,alfa) {
+    
+    var posTmp = this.path.getPointAt(t);
+    this.padrisimo.position.copy(posTmp);
+    // Para l a o r i e n t a c i ón necesitamos l a tangente y l a binormal del tubo en esa p o s i c i ón
+    // también los extraemos del camino y tubo respectivamente
+    var tangente = this.path.getTangentAt(t);
+    posTmp.add(tangente);
+    var segmentoActual = Math.floor(t * this.segmentos);
+    this.padrisimo.up = this.tubo.binormals[segmentoActual];
+    this.padrisimo.lookAt(posTmp);
 
-    }
+    this.padreTraslation.position.y = (this.radio+3.2);
 
-    // Se crea una sección para los controles de la caja
-    var folder = gui.addFolder(titleGui);
-    // Estas lineas son las que añaden los componentes de la interfaz
-    // Las tres cifras indican un valor mínimo, un máximo y el incremento
-  }
+    this.padreRotation.rotation.z = (alfa);
 
-  update() {
-    // No hay nada que actualizar ya que la apertura de la grapadora se ha actualizado desde la interfaz
+    this.t = t;
+    this.alfa = alfa;
+    
   }
 
 }

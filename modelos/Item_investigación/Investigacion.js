@@ -63,6 +63,9 @@ class Investigacion extends THREE.Object3D {
       this.ensamblado.add(mesh);
     }.bind(this)); // Asegúrate de que 'this' se refiere al objeto correcto
 
+    this.ensamblado.scale.set(3,3,3);
+    this.ensamblado.rotation.y = Math.PI;
+
     // TUBO --------------------------------------------------------------------------------------------
     // El constructor del personaje recibe la geometria del Tubo para extraer información necesaria
     this.tubo = geomTubo;
@@ -96,7 +99,7 @@ class Investigacion extends THREE.Object3D {
     this.padrisimo.up = this.tubo.binormals[segmentoActual];
     this.padrisimo.lookAt(posTmp);
 
-    this.padreTraslation.position.y = (this.radio+1.6); //Para que el coche no esté enterrado en el suelo
+    this.padreTraslation.position.y = (this.radio+3.3); //Para que el coche no esté enterrado en el suelo
 
     this.padreRotation.rotation.z = (alfa);
 

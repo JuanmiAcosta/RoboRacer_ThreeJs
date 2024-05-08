@@ -78,7 +78,7 @@ class C_tornillos extends THREE.Object3D {
     this.padrisimo.up = this.tubo.binormals[segmentoActual];
     this.padrisimo.lookAt(posTmp);
 
-    this.padreTraslation.position.y = (this.radio+2.5); //Para que el coche no esté enterrado en el suelo
+    this.padreTraslation.position.y = (this.radio+2.7); //Para que el coche no esté enterrado en el suelo
 
     this.padreRotation.rotation.z = (alfa);
 
