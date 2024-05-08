@@ -1,7 +1,4 @@
 import * as THREE from 'three'
-
-//EL COCHE TIENE TRANSFORMACIONES, ANIMACIONES, CSG EN LA MANO Y CABEZA, TUBEGEOMETRY CON UN PATH.
-
 // Clases de mi proyecto
 
 import { Brazo_robot } from './Brazo_robot.js'

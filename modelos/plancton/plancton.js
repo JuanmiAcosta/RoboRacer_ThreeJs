@@ -8,7 +8,7 @@ class Plancton extends THREE.Object3D {
     this.t = t;
     this.alfa = alfa;
 
-    var geomTubo = tuboMesh.geometry;
+    this.geomTubo = tuboMesh.geometry;
 
     this.ensamblado = new THREE.Object3D();
 
@@ -89,10 +89,10 @@ class Plancton extends THREE.Object3D {
 
     // TUBO --------------------------------------------------------------------------------------------
     // El constructor del personaje recibe la geometria del Tubo para extraer información necesaria
-    this.tubo = geomTubo;
-    this.path = geomTubo.parameters.path;
-    this.radio = geomTubo.parameters.radius;
-    this.segmentos = geomTubo.parameters.tubularSegments;
+    this.tubo = this.geomTubo;
+    this.path = this.geomTubo.parameters.path;
+    this.radio = this.geomTubo.parameters.radius;
+    this.segmentos = this.geomTubo.parameters.tubularSegments;
 
     this.padreTraslation = new THREE.Object3D();
     this.padreTraslation.add(this.ensamblado);

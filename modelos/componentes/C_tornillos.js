@@ -6,27 +6,31 @@ import { Tuerca } from './Tuerca.js'
 
 class C_tornillos extends THREE.Object3D {
 
-  constructor(gui, titleGui) {
+  constructor(tuboMesh, t , alfa) {
     super();
 
-    //-----------------------------------------------------------------------------------
+    this.t = t;
+    this.alfa = alfa;
 
-    this.createGUI(gui, titleGui);
+    var geomTubo = tuboMesh.geometry;
+
+    this.ensamblado = new THREE.Object3D();
+
     //---------------------------------------------------------------------------------------
  
-    var tornillo = new Tornillos(gui, "Controles Tornillo");
-    var tuerca = new Tuerca(gui, "Controles Tuerca");
+    var tornillo = new Tornillos();
+    var tuerca = new Tuerca();
 
-    this.add(tornillo);
-    this.add(tuerca);
+    this.ensamblado.add(tornillo);
+    this.ensamblado.add(tuerca);
 
     var esferaGeo = new THREE.SphereGeometry(1,16,16,0,Math.PI*2);
     //material transparente
     var materialEsfera = new THREE.MeshPhongMaterial({
       color: 0x0000ff, // Color azul
       transparent: true,
-      opacity: 0.3 // Semi-transparente
-    });
+      opacity: 0.1 // Semi-transparente
+   });
 
     const bumpTexture = new THREE.TextureLoader().load('../textures/normalmapitem2.jpg')
     materialEsfera.bumpMap = bumpTexture
@@ -34,26 +38,53 @@ class C_tornillos extends THREE.Object3D {
 
     var esfera = new THREE.Mesh(esferaGeo, materialEsfera);
 
-    this.add(esfera);
+    this.ensamblado.add(esfera);
 
-    this.position.set (-1.2,0,0);
+    this.ensamblado.position.set (-1.2,0,0);
+    this.ensamblado.scale.set(2.5,2.5,2.5);
+    this.ensamblado.rotation.y = Math.PI/2;
+
+    // TUBO --------------------------------------------------------------------------------------------
+    // El constructor del personaje recibe la geometria del Tubo para extraer información necesaria
+    this.tubo = geomTubo;
+    this.path = geomTubo.parameters.path;
+    this.radio = geomTubo.parameters.radius;
+    this.segmentos = geomTubo.parameters.tubularSegments;
+
+    this.padreTraslation = new THREE.Object3D();
+    this.padreTraslation.add(this.ensamblado);
+
+    this.padreRotation = new THREE.Object3D();
+    this.padreRotation.add(this.padreTraslation);
+
+    this.padrisimo = new THREE.Object3D();
+    this.padrisimo.add(this.padreRotation);
+
+    this.add(this.padrisimo);
+
+    this.update(t,alfa);
 
   }
 
-  createGUI(gui, titleGui) {
-    // Controles para el movimiento de la parte móvil
-    this.guiControls = {
+  update(t,alfa) {
+    
+    var posTmp = this.path.getPointAt(t);
+    this.padrisimo.position.copy(posTmp);
+    // Para l a o r i e n t a c i ón necesitamos l a tangente y l a binormal del tubo en esa p o s i c i ón
+    // también los extraemos del camino y tubo respectivamente
+    var tangente = this.path.getTangentAt(t);
+    posTmp.add(tangente);
+    var segmentoActual = Math.floor(t * this.segmentos);
+    this.padrisimo.up = this.tubo.binormals[segmentoActual];
+    this.padrisimo.lookAt(posTmp);
 
-    }
+    this.padreTraslation.position.y = (this.radio+2); //Para que el coche no esté enterrado en el suelo
 
-    // Se crea una sección para los controles de la caja
-    var folder = gui.addFolder(titleGui);
-    // Estas lineas son las que añaden los componentes de la interfaz
-    // Las tres cifras indican un valor mínimo, un máximo y el incremento
-  }
+    this.padreRotation.rotation.z = (alfa);
 
-  update() {
-    // No hay nada que actualizar ya que la apertura de la grapadora se ha actualizado desde la interfaz
+    this.t = t;
+    this.alfa = alfa;
+    
   }
 
 }

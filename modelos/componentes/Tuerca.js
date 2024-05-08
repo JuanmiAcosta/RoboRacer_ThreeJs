@@ -5,16 +5,13 @@ import { CSG } from '../../libs/CSG-v2.js'
 
 class Tuerca extends THREE.Object3D {
 
-  constructor(gui, titleGui) {
+  constructor() {
     super();
 
-    //-----------------------------------------------------------------------------------
-
-    this.createGUI(gui, titleGui);
     //----------------------------------------------------------------------------------------
 
     //MATERIAL CON RELIEVE
-    const material = new THREE.MeshPhongMaterial({color: 0xAAAAAA, roughness: 0.2, metalness: 0.8, side: THREE.DoubleSide});
+    const material = new THREE.MeshStandardMaterial({color: 0xDDDDDD, roughness: 0.8, metalness: 1, side: THREE.DoubleSide});
 
     const bumpTexture = new THREE.TextureLoader().load('../textures/bumpmapmetal.jpg')
     material.bumpMap = bumpTexture
@@ -84,17 +81,6 @@ class Tuerca extends THREE.Object3D {
  
   }
 
-  createGUI(gui, titleGui) {
-    // Controles para el movimiento de la parte móvil
-    this.guiControls = {
-
-    }
-
-    // Se crea una sección para los controles de la caja
-    var folder = gui.addFolder(titleGui);
-    // Estas lineas son las que añaden los componentes de la interfaz
-    // Las tres cifras indican un valor mínimo, un máximo y el incremento
-  }
 
   update() {
     // No hay nada que actualizar ya que la apertura de la grapadora se ha actualizado desde la interfaz

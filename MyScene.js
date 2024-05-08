@@ -16,7 +16,12 @@ import { HUD } from './funciones_HUD.js'
 class MyScene extends THREE.Scene {
 
   constructor(myCanvas) {
+
     super();
+
+    this.NUMENEMIGOS = 10;
+    this.NUMPREMIOS = 5;
+    this.VELOCIDAD = 0.00075;
 
     this.renderer = this.createRenderer(myCanvas);
 
@@ -26,12 +31,7 @@ class MyScene extends THREE.Scene {
 
     this.createCamera();
     this.createCameraThirdPerson();
-
-    //variables para colisiones
-    this.objetosACOlisionar;
-    this.premiosACOlisionar;
-    this.recienCOlisionado=null;
-
+ 
     this.circuito = new Circuito();
     this.add(this.circuito);
 
@@ -42,26 +42,38 @@ class MyScene extends THREE.Scene {
     this.fondo = new THREE.Mesh(new THREE.SphereGeometry(600, 600, 600), new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide }));
     this.add(this.fondo);
 
+    //Normales invertidas para simular la iluminación
+    this.luzSol = new THREE.DirectionalLight(0xffffff, 1);
+    this.luzSol.position.set(0, 0, 0);
+    this.luzSol.target.position.set(0, 0, 0);
+    this.add(this.luzSol);
+    this.sol = new THREE.Mesh(new THREE.SphereGeometry(20, 20, 20), new THREE.MeshPhongMaterial({ color: 0xffff00,  shininess: 100, specular: 0xffff00 }));
+    this.sol.position.set(0, 0, 0);
+    this.add(this.sol);
+
+
+
     // Ejemplo enemigo
 
     // INICIALIZAMOS ARRAY DE OBJETOS A COLISIONAR (ENEMIGOS)
     this.enemigosAColisionar = [];
-    // this.plancton = new Plancton(this.circuito.children[0], 0.6 ,0);
-    // this.cajaPlancton = new THREE.Box3().setFromObject(this.plancton);
-    // this.add(this.plancton);
-    // this.objetosACOlisionar = [this.cajaPlancton];
+    this.tornillosAColisionar = [];
+    this.placasAColisionar = [];
+    this.investigacionesAColisionar = [];
+
+    this.recienColisionado=null;
 
     this.colocarEnemigos();
     this.colocarPremios();
 
     //PARA VISUALIZAR LAS CAJAS DE COLISION
 
-    // var caja1 = new THREE.Box3Helper(this.cajaProta, 0xffff00);
-    // this.add(caja1);
+     var caja1 = new THREE.Box3Helper(this.cajaProta, 0xffff00);
+     this.add(caja1);
     // var caja2 = new THREE.Box3Helper(this.cajaPlancton, 0xffff00);
     // this.add(caja2);
 
-    // caja1.visible = true;
+     caja1.visible = true;
     // caja2.visible = true;
 
     //----------------------------------------------------------------
@@ -99,27 +111,38 @@ class MyScene extends THREE.Scene {
 
   colocarEnemigos() {
 
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < this.NUMENEMIGOS; i++) {
       //Generar un numero aleatorio entre 0 y 1
       var aleatorio = Math.random();
-      var plancton = new Plancton(this.circuito.children[0], (aleatorio*i) % 1, (i * aleatorio) % (Math.PI * 2));
-      this.cajaPlancton = new THREE.Box3().setFromObject(plancton);
-      this.add(plancton);
-      this.enemigosAColisionar.push(this.cajaPlancton);
-    }
 
-    for (var i = 0; i < 10; i++) {
-      //Generar un numero aleatorio entre 0 y 1
-      var aleatorio = Math.random();
-      var ovni = new Ovni(this.circuito.children[0], (aleatorio*i) % 1, (i * aleatorio) % (Math.PI * 2));
-      this.cajaOvni = new THREE.Box3().setFromObject(ovni);
-      this.add(ovni);
-      this.enemigosAColisionar.push(this.cajaOvni);
+      for (var j=0 ; j<3 ; j++){
+        var plancton = new Plancton(this.circuito.children[0], (aleatorio*i) % 1, ((i * aleatorio) % (Math.PI * 2))+(1*j));
+        this.add(plancton);
+        this.cajaPlancton = new THREE.Box3( ).setFromObject(plancton);
+        
+        this.enemigosAColisionar.push(this.cajaPlancton);
+
+        var ovni = new Ovni(this.circuito.children[0], (((aleatorio*i)+0.1) % 1) , ((i * aleatorio) % (Math.PI * 2))+(1*j));
+        this.cajaOvni = new THREE.Box3().setFromObject(ovni);
+        this.add(ovni);
+        this.enemigosAColisionar.push(this.cajaOvni);
+      }
+      
     }
 
   }
 
   colocarPremios() {
+
+    for (var i = 0; i < this.NUMPREMIOS; i++) {
+      //Generar un numero aleatorio entre 0 y 1
+      var aleatorio = Math.random();
+      var tornillos = new C_tornillos(this.circuito.children[0], (aleatorio*i) % 1, (i * aleatorio) % (Math.PI * 2));
+      this.cajaTornillos = new THREE.Box3().setFromObject(tornillos);
+      this.add(tornillos);
+      this.tornillosAColisionar.push(this.cajaTornillos);
+    }
+
   }
 
   createCamera() {
@@ -148,17 +171,31 @@ class MyScene extends THREE.Scene {
     this.cameraController.rotateX(-Math.PI / 12);
 
     this.camera2 = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000);
-
+    this.camera2.add(this.iluminacionProta);
     this.cameraController.add(this.camera2);
-    this.cameraController.add(this.iluminacionProta);
+    
   }
 
-  colisionaEnemigo(objetosAColisionar){
+  colisionaEnemigo(){
     var colision = false;
     for (var i = 0; i < this.enemigosAColisionar.length; i++) {
       if (this.cajaProta.intersectsBox(this.enemigosAColisionar[i])) {
-        if (this.recienCOlisionado != this.enemigosAColisionar[i]){
-          this.recienCOlisionado = this.enemigosAColisionar[i];
+        if (this.recienColisionado != this.enemigosAColisionar[i]){
+          this.recienColisionado = this.enemigosAColisionar[i];
+          colision = true;
+        }
+        return colision;
+      }
+    }
+    return colision;
+  }
+
+  colisionaTornillos(){
+    var colision = false;
+    for (var i = 0; i < this.tornillosAColisionar.length; i++) {
+      if (this.cajaProta.intersectsBox(this.tornillosAColisionar[i])) {
+        if (this.recienColisionado != this.tornillosAColisionar[i]){
+          this.recienColisionado = this.tornillosAColisionar[i];
           colision = true;
         }
         return colision;
@@ -173,8 +210,8 @@ class MyScene extends THREE.Scene {
 
     this.guiControls = {
       // En el contexto de una función   this   alude a la función
-      lightPower: 600.0,  // La potencia de esta fuente de luz se mide en lúmenes
-      ambientIntensity: 0.80,
+      lightPower: 2000.0,  // La potencia de esta fuente de luz se mide en lúmenes
+      ambientIntensity: 2,
       axisOnOff: true,
       t: 0.5,
       alfa: 0,
@@ -187,7 +224,7 @@ class MyScene extends THREE.Scene {
       .name('Luz puntual : ')
       .onChange((value) => this.setLightPower(value));
 
-    folder.add(this.guiControls, 'ambientIntensity', 0, 1, 0.05)
+    folder.add(this.guiControls, 'ambientIntensity', 0, 2, 0.05)
       .name('Luz ambiental: ')
       .onChange((value) => this.setAmbientIntensity(value));
 
@@ -212,28 +249,28 @@ class MyScene extends THREE.Scene {
 
   moverProta() {
     if (this.teclas.get('w')) {
-      this.prota.update((this.prota.t + 0.0005) % 1, this.prota.alfa);
+      this.prota.update((this.prota.t + this.VELOCIDAD) % 1, this.prota.alfa);
       //Movemos las cajas de colision
       this.cajaProta.setFromObject(this.prota);
       //console.log("ADELANTE");
     }
     if (this.teclas.get('a')) {
-      this.prota.update(this.prota.t, (this.prota.alfa - 0.01) % (Math.PI * 2));
+      this.prota.update(this.prota.t, (this.prota.alfa - 0.03) % (Math.PI * 2));
       this.cajaProta.setFromObject(this.prota);
       //console.log("IZQUIERDA");
     }
-    if (this.teclas.get('s')) {
-      this.prota.update((this.prota.t - 0.0005) % 1, this.prota.alfa);
-      this.cajaProta.setFromObject(this.prota);
-      //console.log("ATRAS");
-    }
+     if (this.teclas.get('s')) {
+       this.prota.update((this.prota.t - this.VELOCIDAD) % 1, this.prota.alfa);
+       this.cajaProta.setFromObject(this.prota);
+       //console.log("ATRAS");
+     }
     if (this.teclas.get('d')) {
-      this.prota.update(this.prota.t, (this.prota.alfa + 0.01) % (Math.PI * 2));
+      this.prota.update(this.prota.t, (this.prota.alfa + 0.03) % (Math.PI * 2));
       this.cajaProta.setFromObject(this.prota);
       //console.log("DERECHA");
     }
   }
-
+ 
 
   cambiaCamara() {
     if (this.guiControls.cambia) {
@@ -303,7 +340,7 @@ class MyScene extends THREE.Scene {
     this.camera.updateProjectionMatrix();
   }
 
-  onWindowResize() {
+   onWindowResize() {
 
     if (this.guiControls.cambia) {
 
@@ -317,7 +354,7 @@ class MyScene extends THREE.Scene {
 
     } else {
 
-      var camara = this.camara;
+      var camara = this.camera;
       var nuevaRatio = window.innerWidth / window.innerHeight;
 
       camara.aspect = nuevaRatio;
@@ -341,7 +378,11 @@ class MyScene extends THREE.Scene {
     if (this.colisionaEnemigo(this.objetosACOlisionar)) {
       console.log("COLISION");
       HUD.restarVida();
+    }
 
+    if (this.colisionaTornillos(this.objetosACOlisionar)) {
+      console.log("COLISION TORNILLOS");
+      HUD.sumarVida();
     }
 
     requestAnimationFrame(() => this.update());
