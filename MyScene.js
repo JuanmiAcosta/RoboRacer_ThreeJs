@@ -54,12 +54,15 @@ class MyScene extends THREE.Scene {
     this.sol.position.set(0, 0, 0);
     this.add(this.sol);
 
-
+    //Variables picking
+    this.mouse = new THREE.Vector2();
+    this.raycaster = new THREE.Raycaster();
 
     // Ejemplo enemigo
 
     // INICIALIZAMOS ARRAY DE OBJETOS A COLISIONAR (ENEMIGOS)
     this.enemigosAColisionar = [];
+    this.enemigosPicking = [];
     this.tornillosAColisionar = [];
     this.placasAColisionar = [];
     this.investigacionesAColisionar = [];
@@ -100,6 +103,12 @@ class MyScene extends THREE.Scene {
       }
     });
 
+    document.addEventListener('click',(event) =>{
+      if(event.button === 0){
+        this.picking(event);
+      }
+    });
+
     //Crear un map para almacenar tecla y booleano
     this.teclas = new Map();
     this.leerEntrada = (e) => {
@@ -120,6 +129,7 @@ class MyScene extends THREE.Scene {
 
       for (var j=0 ; j<3 ; j++){
         var plancton = new Plancton(this.circuito.children[0], (aleatorio*i) % 1, ((i * aleatorio) % (Math.PI * 2))+(1*j));
+        this.enemigosPicking.push(plancton);
         this.add(plancton);
         this.cajaPlancton = new THREE.Box3( ).setFromObject(plancton);
         
@@ -127,6 +137,7 @@ class MyScene extends THREE.Scene {
 
         var ovni = new Ovni(this.circuito.children[0], (((aleatorio*i)+0.1) % 1) , ((i * aleatorio) % (Math.PI * 2))+(1*j));
         this.cajaOvni = new THREE.Box3().setFromObject(ovni);
+        this.enemigosPicking.push(ovni);
         this.add(ovni);
         this.enemigosAColisionar.push(this.cajaOvni);
       }
@@ -146,6 +157,19 @@ class MyScene extends THREE.Scene {
       this.tornillosAColisionar.push(this.cajaTornillos);
     }
 
+  }
+
+  picking(event){
+    this.mouse.x = (event.clientX /window.innerWidth) * 2-1;
+    this.mouse.y = 1-2*(event.clientY / window.innerHeight);
+
+    this.raycaster.setFromCamera(this.mouse,this.camera2);
+
+    var pickedObjects = this.raycaster.intersectObjects(this.enemigosPicking,true);
+
+    if(pickedObjects.length>0){
+      console.log("Clickado");
+    }
   }
 
   createCamera() {
