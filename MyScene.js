@@ -128,12 +128,12 @@ class MyScene extends THREE.Scene {
         this.enemigosPicking.push(plancton);
         this.add(plancton);
         this.cajaPlancton = new THREE.Box3().setFromObject(plancton);
-        this.cajaPlancton.expandByScalar(-0.5);
+        this.cajaPlancton.expandByScalar(-0.9);
         this.enemigosAColisionar.push(this.cajaPlancton);
 
         var ovni = new Ovni(this.circuito.children[0], (((aleatorio * i) + 0.2) % 1), ((i * aleatorio) % (Math.PI * 2)) + (1 * j));
         this.cajaOvni = new THREE.Box3().setFromObject(ovni);
-        this.cajaOvni.expandByScalar(-0.5);
+        this.cajaOvni.expandByScalar(-0.9);
         this.enemigosPicking.push(ovni);
         this.add(ovni);
         this.enemigosAColisionar.push(this.cajaOvni);
@@ -150,19 +150,19 @@ class MyScene extends THREE.Scene {
       var aleatorio = Math.random();
       var tornillos = new C_tornillos(this.circuito.children[0], (aleatorio * i) % 1, (i * aleatorio) % (Math.PI * 2));
       this.cajaTornillos = new THREE.Box3().setFromObject(tornillos);
-      this.cajaTornillos.expandByScalar(1.1);
+      this.cajaTornillos.expandByScalar(0.9);
       this.add(tornillos);
       this.tornillosAColisionar.push(this.cajaTornillos);
 
       var placas = new C_placa(this.circuito.children[0], ((aleatorio * i)) % 1, (i * aleatorio) % (Math.PI * 2) + 0.4);
       this.cajaPlaca = new THREE.Box3().setFromObject(placas);
-      this.cajaPlaca.expandByScalar(1.1);
+      this.cajaPlaca.expandByScalar(0.9);
       this.add(placas);
       this.placasAColisionar.push(this.cajaPlaca);
 
       var investigaciones = new Investigacion(this.circuito.children[0], ((aleatorio * i)) % 1, (i * aleatorio) % (Math.PI * 2) + 0.8);
       this.cajaInvestigacion = new THREE.Box3().setFromObject(investigaciones);
-      this.cajaInvestigacion.expandByScalar(1.1);
+      this.cajaInvestigacion.expandByScalar(0.9);
       this.add(investigaciones);
       this.investigacionesAColisionar.push(this.cajaInvestigacion);
     }
@@ -255,6 +255,7 @@ colisionaPlacas(){
       if (this.recienColisionado != this.placasAColisionar[i]) {
         this.recienColisionado = this.placasAColisionar[i];
         colision = true;
+        console.log("Colisiona placa");
       }
       return colision;
     }
