@@ -7,6 +7,10 @@ class Ovni extends THREE.Object3D {
   constructor(tuboMesh, t , alfa ) {
     super();
 
+    this.MAX_ALTURA = 2;
+    this.MIN_ALTURA = -1.5;
+    this.SUBIENDO = true;
+
     this.t = t;
     this.alfa = alfa;
 
@@ -162,6 +166,24 @@ class Ovni extends THREE.Object3D {
     this.cannon2.rotation.x=Math.PI/2;
     this.cannon1.position.z=1;
     this.cannon2.position.z=1;
+  }
+
+  moverse(){
+    if (this.SUBIENDO){
+      if (this.ensamblado.position.y < this.MAX_ALTURA){
+        this.ensamblado.position.y += 0.03;
+      } else {
+        this.SUBIENDO = false;
+      }
+    }
+    else {
+      if (this.ensamblado.position.y > this.MIN_ALTURA){
+        this.ensamblado.position.y -= 0.03;
+      } else {
+        this.SUBIENDO = true;
+      }
+    }
+
   }
 
   update(t,alfa) {

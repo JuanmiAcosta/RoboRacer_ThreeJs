@@ -43,6 +43,7 @@ class HUD {
 
     static sumarVida() { // aumentar sólo si hay 6 vidas o menos
         if (document.querySelectorAll('.vida').length < 6) {
+            HUD.vidas += 1;
             var vidas = document.querySelector('.vida_container');
             var vida = document.createElement('img');
             vida.src = "./imgs/corazon.png";

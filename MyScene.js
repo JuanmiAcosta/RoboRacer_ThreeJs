@@ -2,6 +2,7 @@
 import * as THREE from 'three'
 import { GUI } from './libs/dat.gui.module.js'
 import { TrackballControls } from './libs/TrackballControls.js'
+import * as TWEEN from './libs/tween.esm.js'
 
 import { Ensamblado } from './modelos/coche_lunar/Ensamblado.js' //Modelo robot principal 
 import { Circuito } from './modelos/circuito/Circuito.js';
@@ -62,29 +63,23 @@ class MyScene extends THREE.Scene {
 
     this.add(this.toro);
 
-
-    //Variables picking
+    //VARIABLES PICKING
     this.mouse = new THREE.Vector2();
     this.raycaster = new THREE.Raycaster();
 
-    // Ejemplo enemigo
-
-    // INICIALIZAMOS ARRAY DE OBJETOS A COLISIONAR (ENEMIGOS)
+    // VARIABLES COLISION
     this.enemigosAColisionar = [];
+    this.ovnis = [];
     this.tornillosAColisionar = [];
     this.placasAColisionar = [];
     this.investigacionesAColisionar = [];
 
     this.recienColisionadoEnemigo = null;
-    this.recienColisionadoTornillo = null;
-    this.recienColisionadoPlaca = null;
-    this.recienColisionadoInvestigacion = null;
 
     this.colocarEnemigos();
     this.colocarPremios();
 
     //PARA VISUALIZAR LAS CAJAS DE COLISION
-
     var caja1 = new THREE.Box3Helper(this.cajaProta, 0xffff00);
     this.add(caja1);
 
@@ -145,14 +140,15 @@ class MyScene extends THREE.Scene {
         this.add(this.cajaPlanctonVisible);
         this.enemigosAColisionar.push([this.cajaPlancton, plancton]);
         var ovni = new Ovni(this.circuito.children[0], (((aleatorio * i) + 0.2) % 1), ((i * aleatorio) % (Math.PI * 2)) + (1 * j));
+        this.ovnis.push(ovni);
         this.cajaOvni = new THREE.Box3().setFromObject(ovni);
         this.cajaOvni.expandByScalar(-3);
         this.add(ovni);
         this.enemigosAColisionar.push([this.cajaOvni, ovni]);
+
       }
 
     }
-
   }
 
   colocarPremios() {
@@ -201,21 +197,23 @@ class MyScene extends THREE.Scene {
 
       var arrayMesh = this.enemigosAColisionar.map((value) => value[1]);
 
-      console.log(arrayMesh);
-
       var pickedObjects = this.raycaster.intersectObjects(arrayMesh, true);
 
       if (pickedObjects.length > 0) {
         var object = pickedObjects[0].object;
 
-        // Buscar en la jerarquía de padres para encontrar el objeto Plancton
-        while (object && (!(object instanceof Plancton) || !(object instanceof Ovni))) {
+        // Buscar en la jerarquía de padres para encontrar el objeto Plancton o Ovni
+        while (object && !(object instanceof Plancton) && !(object instanceof Ovni)) {
           object = object.parent;
         }
 
         if (object) {
           console.log(object);
-          object.update((object.t+0.5)%1, object.alfa);
+          object.update((object.t + 0.5) % 1, object.alfa);
+
+          // Buscar su caja correspondiente en enemigosAColisionar
+          var caja = this.enemigosAColisionar.find((value) => value[1] === object)[0];
+          caja.setFromObject(object);
         }
       }
 
@@ -302,7 +300,10 @@ class MyScene extends THREE.Scene {
         if (this.recienColisionadoEnemigo != caja) {
           this.recienColisionadoEnemigo = caja;
           colision = true;
-          this.VELOCIDAD = 0.00025;
+          this.VELOCIDAD -= this.VELOCIDAD * 0.2;
+          if (this.VELOCIDAD < 0) {
+            this.VELOCIDAD = 0;
+          }
           console.log(mesh);
         }
         return colision;
@@ -316,12 +317,13 @@ class MyScene extends THREE.Scene {
     for (var i = 0; i < this.tornillosAColisionar.length; i++) {
       let [caja, mesh] = this.tornillosAColisionar[i];
       if (this.cajaProta.intersectsBox(caja)) {
-        if (this.recienColisionadoTornillo != caja) {
-          this.recienColisionadoTornillo = caja;
+        if (HUD.vidas < 6) {
           colision = true;
-          console.log(mesh);
+          mesh.update((mesh.t + 0.5) % 1, mesh.alfa);
+          caja.setFromObject(mesh);
+
+          return colision;
         }
-        return colision;
       }
     }
     return colision;
@@ -332,11 +334,11 @@ class MyScene extends THREE.Scene {
     for (var i = 0; i < this.placasAColisionar.length; i++) {
       let [caja, mesh] = this.placasAColisionar[i];
       if (this.cajaProta.intersectsBox(caja)) {
-        if (this.recienColisionadoPlaca != caja) {
-          this.recienColisionadoPlaca = caja;
-          colision = true;
-          console.log(mesh);
-        }
+
+        colision = true;
+        mesh.update((mesh.t + 0.5) % 1, mesh.alfa);
+        caja.setFromObject(mesh);
+
         return colision;
       }
     }
@@ -348,12 +350,13 @@ class MyScene extends THREE.Scene {
     for (var i = 0; i < this.investigacionesAColisionar.length; i++) {
       let [caja, mesh] = this.investigacionesAColisionar[i];
       if (this.cajaProta.intersectsBox(caja)) {
-        if (this.recienColisionadoInvestigacion != caja) {
-          this.recienColisionadoInvestigacion = caja;
+        if (HUD.porcentaje < 100) {
           colision = true;
-          console.log(mesh);
+          mesh.update((mesh.t + 0.5) % 1, mesh.alfa);
+          caja.setFromObject(mesh);
+
+          return colision;
         }
-        return colision;
       }
     }
     return colision;
@@ -535,7 +538,7 @@ class MyScene extends THREE.Scene {
       HUD.actualizarBarraInvestigacion();
     }
 
-    requestAnimationFrame(() => this.update(this.toro.update()));
+    requestAnimationFrame(() => this.update(this.toro.update(), this.ovnis.forEach(ovni => ovni.moverse())));
 
   }
 }
