@@ -19,9 +19,11 @@ class MyScene extends THREE.Scene {
 
     super();
 
+    this.VELOCIDAD_MAX = 0.00075;
+
     this.NUMENEMIGOS = 10;
     this.NUMPREMIOS = 5;
-    this.VELOCIDAD = 0.00075;
+    this.VELOCIDAD = 0;
 
     this.renderer = this.createRenderer(myCanvas);
 
@@ -46,9 +48,20 @@ class MyScene extends THREE.Scene {
     this.fondo = new THREE.Mesh(new THREE.SphereGeometry(600, 600, 600), new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide }));
     this.add(this.fondo);
 
-    this.sol = new THREE.Mesh(new THREE.SphereGeometry(20, 20, 20), new THREE.MeshPhongMaterial({ color: 0xffff00, shininess: 100, specular: 0xffff00 }));
+    this.sol = new THREE.Mesh(new THREE.SphereGeometry(10, 10, 10), new THREE.MeshPhongMaterial({ color: 0x00ffff, shininess: 80, specular: 0x00ffff, side: THREE.DoubleSide }));
     this.sol.position.set(0, 0, 0);
     this.add(this.sol);
+
+    this.toro = new THREE.Mesh(new THREE.TorusGeometry(15, 1, 16, 100), new THREE.MeshPhongMaterial({ color: 0x00dddd, shininess: 80, specular: 0x00ffff, side: THREE.DoubleSide }));
+    this.toro.position.set(0, 0, 0);
+
+    this.toro.update = () => {
+      this.toro.rotation.y += 0.01;
+      this.toro.rotation.x += 0.01;
+    }
+
+    this.add(this.toro);
+
 
     //Variables picking
     this.mouse = new THREE.Vector2();
@@ -63,7 +76,10 @@ class MyScene extends THREE.Scene {
     this.placasAColisionar = [];
     this.investigacionesAColisionar = [];
 
-    this.recienColisionado = null;
+    this.recienColisionadoEnemigo = null;
+    this.recienColisionadoTornillo = null;
+    this.recienColisionadoPlaca = null;
+    this.recienColisionadoInvestigacion = null;
 
     this.colocarEnemigos();
     this.colocarPremios();
@@ -72,11 +88,8 @@ class MyScene extends THREE.Scene {
 
     var caja1 = new THREE.Box3Helper(this.cajaProta, 0xffff00);
     this.add(caja1);
-    // var caja2 = new THREE.Box3Helper(this.cajaPlancton, 0xffff00);
-    // this.add(caja2);
 
     caja1.visible = true;
-    // caja2.visible = true;
 
     //----------------------------------------------------------------
 
@@ -129,14 +142,14 @@ class MyScene extends THREE.Scene {
         this.add(plancton);
         this.cajaPlancton = new THREE.Box3().setFromObject(plancton);
         this.cajaPlancton.expandByScalar(-0.5);
-        this.enemigosAColisionar.push(this.cajaPlancton);
+        this.enemigosAColisionar.push([this.cajaPlancton, plancton]);
 
         var ovni = new Ovni(this.circuito.children[0], (((aleatorio * i) + 0.2) % 1), ((i * aleatorio) % (Math.PI * 2)) + (1 * j));
         this.cajaOvni = new THREE.Box3().setFromObject(ovni);
         this.cajaOvni.expandByScalar(-0.5);
         this.enemigosPicking.push(ovni);
         this.add(ovni);
-        this.enemigosAColisionar.push(this.cajaOvni);
+        this.enemigosAColisionar.push([this.cajaOvni, ovni]);
       }
 
     }
@@ -150,21 +163,21 @@ class MyScene extends THREE.Scene {
       var aleatorio = Math.random();
       var tornillos = new C_tornillos(this.circuito.children[0], (aleatorio * i) % 1, (i * aleatorio) % (Math.PI * 2));
       this.cajaTornillos = new THREE.Box3().setFromObject(tornillos);
-      this.cajaTornillos.expandByScalar(1.1);
+      this.cajaTornillos.expandByScalar(0.8);
       this.add(tornillos);
-      this.tornillosAColisionar.push(this.cajaTornillos);
+      this.tornillosAColisionar.push([this.cajaTornillos, tornillos]);
 
       var placas = new C_placa(this.circuito.children[0], ((aleatorio * i)) % 1, (i * aleatorio) % (Math.PI * 2) + 0.4);
       this.cajaPlaca = new THREE.Box3().setFromObject(placas);
-      this.cajaPlaca.expandByScalar(1.1);
+      this.cajaPlaca.expandByScalar(0.8);
       this.add(placas);
-      this.placasAColisionar.push(this.cajaPlaca);
+      this.placasAColisionar.push([this.cajaPlaca, placas]);
 
       var investigaciones = new Investigacion(this.circuito.children[0], ((aleatorio * i)) % 1, (i * aleatorio) % (Math.PI * 2) + 0.8);
       this.cajaInvestigacion = new THREE.Box3().setFromObject(investigaciones);
-      this.cajaInvestigacion.expandByScalar(1.1);
+      this.cajaInvestigacion.expandByScalar(0.8);
       this.add(investigaciones);
-      this.investigacionesAColisionar.push(this.cajaInvestigacion);
+      this.investigacionesAColisionar.push([this.cajaInvestigacion, investigaciones]);
     }
 
   }
@@ -191,259 +204,298 @@ class MyScene extends THREE.Scene {
 
   }
 
-createCamera() {
+  createCamera() {
 
-  this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 2000);
+    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 2000);
 
-  this.camera.position.set(0, 0, 450);
-  var look = new THREE.Vector3(0, 0, 0);
-  this.camera.lookAt(look);
-  this.add(this.camera);
-
-  this.cameraControl = new TrackballControls(this.camera, this.renderer.domElement);
-
-  this.cameraControl.rotateSpeed = 5;
-  this.cameraControl.zoomSpeed = -2;
-  this.cameraControl.panSpeed = 0.5;
-
-  this.cameraControl.target = look;
-}
-
-createCameraThirdPerson() {
-
-  this.cameraController = new THREE.Object3D();
-  this.cameraController.position.set(0, 30, -19);
-  this.cameraController.rotateY(Math.PI);
-  this.cameraController.rotateX(-Math.PI / 12);
-
-  this.camera2 = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000);
-  this.cameraController.add(this.camera2);
-}
-
-colisionaEnemigo(){
-  var colision = false;
-  for (var i = 0; i < this.enemigosAColisionar.length; i++) {
-    if (this.cajaProta.intersectsBox(this.enemigosAColisionar[i])) {
-      if (this.recienColisionado != this.enemigosAColisionar[i]) {
-        this.recienColisionado = this.enemigosAColisionar[i];
-        colision = true;
-      }
-      return colision;
-    }
-  }
-  return colision;
-}
-
-colisionaTornillos(){
-  var colision = false;
-  for (var i = 0; i < this.tornillosAColisionar.length; i++) {
-    if (this.cajaProta.intersectsBox(this.tornillosAColisionar[i])) {
-      if (this.recienColisionado != this.tornillosAColisionar[i]) {
-        this.recienColisionado = this.tornillosAColisionar[i];
-        colision = true;
-      }
-      return colision;
-    }
-  }
-  return colision;
-}
-
-colisionaPlacas(){
-  var colision = false;
-  for (var i = 0; i < this.placasAColisionar.length; i++) {
-    if (this.cajaProta.intersectsBox(this.placasAColisionar[i])) {
-      if (this.recienColisionado != this.placasAColisionar[i]) {
-        this.recienColisionado = this.placasAColisionar[i];
-        colision = true;
-      }
-      return colision;
-    }
-  }
-  return colision;
-}
-
-colisionaInvestigaciones(){
-  var colision = false;
-  for (var i = 0; i < this.investigacionesAColisionar.length; i++) {
-    if (this.cajaProta.intersectsBox(this.investigacionesAColisionar[i])) {
-      if (this.recienColisionado != this.investigacionesAColisionar[i]) {
-        this.recienColisionado = this.investigacionesAColisionar[i];
-        colision = true;
-      }
-      return colision;
-    }
-  }
-  return colision;
-}
-
-createGUI() {
-
-  var gui = new GUI();
-
-  this.guiControls = {
-    t: 0.5,
-    alfa: 0
-  }
-
-  var folder = gui.addFolder('Gui');
-
-  folder.add(this.guiControls, 't', 0, 1, 0.0001)
-    .name('Recorrido : ')
-    .onChange((value) => this.prota.update(value, this.guiControls.alfa));
-
-  folder.add(this.guiControls, 'alfa', 0, 2 * Math.PI, 0.01)
-    .name('Giro : ')
-    .onChange((value) => this.prota.update(this.guiControls.t, value));
-
-  return gui;
-}
-
-moverProta() {
-  if (this.teclas.get('w')) {
-    this.prota.update((this.prota.t + this.VELOCIDAD) % 1, this.prota.alfa);
-  }
-  if (this.teclas.get('a')) {
-    this.prota.update(this.prota.t, (this.prota.alfa - 0.03) % (Math.PI * 2));
-  }
-  if (this.teclas.get('s')) {
-    console.log((this.prota.t - this.VELOCIDAD) % 1);
-    if ((this.prota.t - this.VELOCIDAD) % 1 < 0) {
-      this.prota.t=1;
-    }
-    this.prota.update((this.prota.t - this.VELOCIDAD) % 1, this.prota.alfa);
-    
-  }
-  if (this.teclas.get('d')) {
-    this.prota.update(this.prota.t, (this.prota.alfa + 0.03) % (Math.PI * 2));
-  }
-
-  this.cajaProta.setFromObject(this.padreNoTransformable);
-  this.cajaProta.expandByScalar(-1);
-
-}
-
-cambiaCamara() {
-  if (this.guiControls.cambia) {
-    this.remove(this.camera);
-    this.padreCamara.add(this.cameraController);
-  } else {
-    this.padreCamara.remove(this.cameraController);
+    this.camera.position.set(0, 0, 450);
+    var look = new THREE.Vector3(0, 0, 0);
+    this.camera.lookAt(look);
     this.add(this.camera);
-  }
-}
 
-createLights() {
+    this.cameraControl = new TrackballControls(this.camera, this.renderer.domElement);
 
-  //ILUMINACION 
-  //luz direccional 1
-  this.iluminacionProta = new THREE.DirectionalLight(0xffaaaa, 6.5);
-  this.iluminacionProta.position.set(0, 0, -50);
+    this.cameraControl.rotateSpeed = 5;
+    this.cameraControl.zoomSpeed = -2;
+    this.cameraControl.panSpeed = 0.5;
 
-  //luz ambiental
-  this.ambientLight = new THREE.AmbientLight(0x404040, 6);
-
-  //luz direccional 2
-  this.iluminacionProta2 = new THREE.DirectionalLight(0xaaaaff, 6.5);
-  this.iluminacionProta2.position.set(0, 0, 50);
-  this.iluminacionProta2.rotateY(Math.PI);
-
-  this.add(this.iluminacionProta);
-  this.add(this.iluminacionProta2);
-  this.add(this.ambientLight);
-}
-
-setAxisVisible(valor) {
-  this.axis.visible = valor;
-}
-
-createRenderer(myCanvas) {
-
-  var renderer = new THREE.WebGLRenderer();
-
-  renderer.setClearColor(new THREE.Color(0xffffff), 1.0);
-
-  renderer.setSize(window.innerWidth, window.innerHeight);
-
-  $(myCanvas).append(renderer.domElement);
-
-  return renderer;
-}
-
-getCamera() {
-  if (this.guiControls.cambia) {
-    return this.camera2;
-  } else {
-    return this.camera;
-  }
-}
-
-setCameraAspect(ratio) {
-  this.camera.aspect = ratio;
-  this.camera.updateProjectionMatrix();
-}
-
-onWindowResize() {
-
-  if (this.guiControls.cambia) {
-
-    var camara = this.camera2;
-    var nuevaRatio = window.innerWidth / window.innerHeight;
-
-    camara.aspect = nuevaRatio;
-
-    camara.updateProjectionMatrix();
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-
-  } else {
-
-    var camara = this.camera;
-    var nuevaRatio = window.innerWidth / window.innerHeight;
-
-    camara.aspect = nuevaRatio;
-
-    camara.updateProjectionMatrix();
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.cameraControl.target = look;
   }
 
-}
+  createCameraThirdPerson() {
 
-update() {
+    this.cameraController = new THREE.Object3D();
+    this.cameraController.position.set(0, 30, -19);
+    this.cameraController.rotateY(Math.PI);
+    this.cameraController.rotateX(-Math.PI / 12);
 
-  this.renderer.render(this, this.getCamera());
-
-  if (!this.guiControls.cambia) {
-    this.cameraControl.update();
+    this.camera2 = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000);
+    this.cameraController.add(this.camera2);
   }
 
-  this.moverProta();
-
-  if (this.colisionaEnemigo()) {
-    console.log("COLISION");
-    HUD.restarVida();
+  colisionaEnemigo() {
+    var colision = false;
+    for (var i = 0; i < this.enemigosAColisionar.length; i++) {
+      let [caja, mesh] = this.enemigosAColisionar[i];
+      if (this.cajaProta.intersectsBox(caja)) {
+        if (this.recienColisionadoEnemigo != caja) {
+          this.recienColisionadoEnemigo = caja;
+          colision = true;
+          console.log(mesh);
+        }
+        return colision;
+      }
+    }
+    return colision;
   }
 
-  if (this.colisionaTornillos()) {
-    console.log("COLISION TORNILLOS");
-    HUD.sumarVida();
+  colisionaTornillos() {
+    var colision = false;
+    for (var i = 0; i < this.tornillosAColisionar.length; i++) {
+      let [caja, mesh] = this.tornillosAColisionar[i];
+      if (this.cajaProta.intersectsBox(caja)) {
+        if (this.recienColisionadoTornillo != caja) {
+          this.recienColisionadoTornillo = caja;
+          colision = true;
+          console.log(mesh);
+        }
+        return colision;
+      }
+    }
+    return colision;
   }
 
-  if (this.colisionaPlacas()) {
-    console.log("COLISION PLACAS");
+  colisionaPlacas() {
+    var colision = false;
+    for (var i = 0; i < this.placasAColisionar.length; i++) {
+      let [caja, mesh] = this.placasAColisionar[i];
+      if (this.cajaProta.intersectsBox(caja)) {
+        if (this.recienColisionadoPlaca != caja) {
+          this.recienColisionadoPlaca = caja;
+          colision = true;
+          console.log(mesh);
+        }
+        return colision;
+      }
+    }
+    return colision;
   }
 
-  if (this.colisionaInvestigaciones()) {
-    console.log("COLISION INVESTIGACIONES");
-    HUD.actualizarBarraInvestigacion();
+  colisionaInvestigaciones() {
+    var colision = false;
+    for (var i = 0; i < this.investigacionesAColisionar.length; i++) {
+      let [caja, mesh] = this.investigacionesAColisionar[i];
+      if (this.cajaProta.intersectsBox(caja)) {
+        if (this.recienColisionadoInvestigacion != caja) {
+          this.recienColisionadoInvestigacion = caja;
+          colision = true;
+          console.log(mesh);
+        }
+        return colision;
+      }
+    }
+    return colision;
   }
 
-  if (HUD.vida <= 0) {
-    alert("GAME OVER");
-    location.reload();
+  createGUI() {
+
+    var gui = new GUI();
+
+    this.guiControls = {
+      t: 0.5,
+      alfa: 0
+    }
+
+    var folder = gui.addFolder('Gui');
+
+    folder.add(this.guiControls, 't', 0, 1, 0.0001)
+      .name('Recorrido : ')
+      .onChange((value) => this.prota.update(value, this.guiControls.alfa));
+
+    folder.add(this.guiControls, 'alfa', 0, 2 * Math.PI, 0.01)
+      .name('Giro : ')
+      .onChange((value) => this.prota.update(this.guiControls.t, value));
+
+    return gui;
   }
 
-  requestAnimationFrame(() => this.update());
+  moverProta() {
+    if (this.teclas.get('w')) {
+      this.VELOCIDAD = this.VELOCIDAD + 0.000001;
+      if (this.VELOCIDAD > this.VELOCIDAD_MAX) {
+        this.VELOCIDAD = this.VELOCIDAD_MAX;
+      }
+      this.prota.update((this.prota.t + this.VELOCIDAD) % 1, this.prota.alfa);
+    } else {
+      if (!this.teclas.get('s')) {
+        //aqui se frena
+        this.VELOCIDAD = this.VELOCIDAD - 0.000005;
+        if (this.VELOCIDAD < 0) {
+          this.VELOCIDAD = 0;
+        }
+        this.prota.update((this.prota.t + this.VELOCIDAD) % 1, this.prota.alfa);
+      }else{
+        this.prota.update((this.prota.t - this.VELOCIDAD) % 1, this.prota.alfa);
+      }
+    }
+    if (this.teclas.get('a')) {
+      this.prota.update(this.prota.t, (this.prota.alfa - 0.03) % (Math.PI * 2));
+    }
+    if (this.teclas.get('s')) {
+      if (this.VELOCIDAD >= 0) {
+        this.VELOCIDAD = this.VELOCIDAD + 0.000001;
+        if (this.VELOCIDAD < 0) {
+          this.VELOCIDAD = 0;
+        }
+        this.prota.update((this.prota.t - this.VELOCIDAD) % 1, this.prota.alfa);
+      } else {
+        this.VELOCIDAD = this.VELOCIDAD + 0.000001;
+        if (this.VELOCIDAD > this.VELOCIDAD_MAX) {
+          this.VELOCIDAD = this.VELOCIDAD_MAX;
+        }
+        this.prota.update((this.prota.t - this.VELOCIDAD) % 1, this.prota.alfa);
+      }
+    }
+    if (this.teclas.get('d')) {
+      this.prota.update(this.prota.t, (this.prota.alfa + 0.03) % (Math.PI * 2));
+    }
 
-}
+    this.cajaProta.setFromObject(this.padreNoTransformable);
+    this.cajaProta.expandByScalar(-1);
+
+  }
+
+  cambiaCamara() {
+    if (this.guiControls.cambia) {
+      this.remove(this.camera);
+      this.padreCamara.add(this.cameraController);
+    } else {
+      this.padreCamara.remove(this.cameraController);
+      this.add(this.camera);
+    }
+  }
+
+  createLights() {
+
+    //ILUMINACION 
+    //luz direccional 1
+    this.iluminacionProta = new THREE.DirectionalLight(0xffaaaa, 8.5);
+    this.iluminacionProta.position.set(0, 0, -50);
+
+    //luz ambiental
+    this.ambientLight = new THREE.AmbientLight(0x404040, 1);
+
+    //luz direccional 2
+    this.iluminacionProta2 = new THREE.DirectionalLight(0xaaaaff, 8.5);
+    this.iluminacionProta2.position.set(0, 0, 50);
+    this.iluminacionProta2.rotateY(Math.PI);
+
+    //Luz puntual amarilla
+    this.luzPuntual = new THREE.PointLight(0x00ffff);
+    this.luzPuntual.intensity = 1;
+    this.luzPuntual.power = 100000;
+    this.luzPuntual.position.set(0, 0, 0);
+    this.luzPuntual.visible = true;
+    this.luzPuntual.castShadow = true;
+
+    this.add(this.iluminacionProta);
+    this.add(this.iluminacionProta2);
+    this.add(this.ambientLight);
+    this.add(this.luzPuntual);
+  }
+
+  setAxisVisible(valor) {
+    this.axis.visible = valor;
+  }
+
+  createRenderer(myCanvas) {
+
+    var renderer = new THREE.WebGLRenderer();
+
+    renderer.setClearColor(new THREE.Color(0xffffff), 1.0);
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    $(myCanvas).append(renderer.domElement);
+
+    return renderer;
+  }
+
+  getCamera() {
+    if (this.guiControls.cambia) {
+      return this.camera2;
+    } else {
+      return this.camera;
+    }
+  }
+
+  setCameraAspect(ratio) {
+    this.camera.aspect = ratio;
+    this.camera.updateProjectionMatrix();
+  }
+
+  onWindowResize() {
+
+    if (this.guiControls.cambia) {
+
+      var camara = this.camera2;
+      var nuevaRatio = window.innerWidth / window.innerHeight;
+
+      camara.aspect = nuevaRatio;
+
+      camara.updateProjectionMatrix();
+      this.renderer.setSize(window.innerWidth, window.innerHeight);
+
+    } else {
+
+      var camara = this.camera;
+      var nuevaRatio = window.innerWidth / window.innerHeight;
+
+      camara.aspect = nuevaRatio;
+
+      camara.updateProjectionMatrix();
+      this.renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+  }
+
+  update() {
+
+    this.renderer.render(this, this.getCamera());
+
+    if (!this.guiControls.cambia) {
+      this.cameraControl.update();
+    }
+
+    this.moverProta();
+
+    if (this.colisionaEnemigo()) {
+      console.log("COLISION");
+      HUD.restarVida();
+    }
+
+    if (this.colisionaTornillos()) {
+      console.log("COLISION TORNILLOS");
+      HUD.sumarVida();
+    }
+
+    if (this.colisionaPlacas()) {
+      console.log("COLISION PLACAS");
+    }
+
+    if (this.colisionaInvestigaciones()) {
+      console.log("COLISION INVESTIGACIONES");
+      HUD.actualizarBarraInvestigacion();
+    }
+
+    if (HUD.vida <= 0) {
+      alert("GAME OVER");
+      location.reload();
+    }
+
+    requestAnimationFrame(() => this.update(this.toro.update()));
+
+  }
 }
 
 

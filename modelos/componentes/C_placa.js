@@ -135,8 +135,6 @@ class C_placa extends THREE.Object3D {
     this.padreResistencias2.position.set(0.3,0.7,0);
     this.ensamblado.add(this.padreResistencias2);
 
-    
-
     //microchip
 
     var micro = new THREE.BoxGeometry(0.4,0.4,0.03);
@@ -152,8 +150,7 @@ class C_placa extends THREE.Object3D {
 
     //----------------------------------------------------------------------------------------
 
-    this.position.set (+1.2,0,0);
-
+    this.ensamblado.position.set (+1.2,0,0);
     this.ensamblado.scale.set(3,3,3);
     this.ensamblado.rotation.y = Math.PI/2;
 
@@ -191,7 +188,7 @@ class C_placa extends THREE.Object3D {
     this.padrisimo.up = this.tubo.binormals[segmentoActual];
     this.padrisimo.lookAt(posTmp);
 
-    this.padreTraslation.position.y = (this.radio+3.2);
+    this.padreTraslation.position.y = (this.radio + 3.5);
 
     this.padreRotation.rotation.z = (alfa);
 
