@@ -26,11 +26,8 @@ class MyScene extends THREE.Scene {
     this.VELOCIDAD = 0;
 
     this.renderer = this.createRenderer(myCanvas);
-
     this.gui = this.createGUI();
-
     this.createLights();
-
     this.createCamera();
     this.createCameraThirdPerson();
 
