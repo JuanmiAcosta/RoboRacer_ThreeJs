@@ -311,30 +311,6 @@ class MyScene extends THREE.Scene {
     return gui;
   }
 
-  moverProta() {
-    if (this.teclas.get('w')) {
-      this.prota.update((this.prota.t + this.VELOCIDAD) % 1, this.prota.alfa);
-    }
-    if (this.teclas.get('a')) {
-      this.prota.update(this.prota.t, (this.prota.alfa - 0.03) % (Math.PI * 2));
-    }
-    if (this.teclas.get('s')) {
-      console.log((this.prota.t - this.VELOCIDAD) % 1);
-      if ((this.prota.t - this.VELOCIDAD) % 1 < 0) {
-        this.prota.t = 1;
-      }
-      this.prota.update((this.prota.t - this.VELOCIDAD) % 1, this.prota.alfa);
-
-    }
-    if (this.teclas.get('d')) {
-      this.prota.update(this.prota.t, (this.prota.alfa + 0.03) % (Math.PI * 2));
-    }
-
-    this.cajaProta.setFromObject(this.padreNoTransformable);
-    this.cajaProta.expandByScalar(-1);
-
-  }
-
   cambiaCamara() {
     if (this.guiControls.cambia) {
       this.remove(this.camera);
@@ -451,41 +427,31 @@ class MyScene extends THREE.Scene {
   }
 
   moverProta() {
+    var atras;
     if (this.teclas.get('w')) {
+      atras = false;
       this.VELOCIDAD = this.VELOCIDAD + 0.000001;
-      if (this.VELOCIDAD > this.VELOCIDAD_MAX) {
+      if (this.VELOCIDAD >= this.VELOCIDAD_MAX) {
         this.VELOCIDAD = this.VELOCIDAD_MAX;
       }
       this.prota.update((this.prota.t + this.VELOCIDAD) % 1, this.prota.alfa);
     } else {
-      if (!this.teclas.get('s')) {
+      if (!this.teclas.get('s') && !atras) {
         //aqui se frena
         this.VELOCIDAD = this.VELOCIDAD - 0.000005;
         if (this.VELOCIDAD < 0) {
           this.VELOCIDAD = 0;
         }
         this.prota.update((this.prota.t + this.VELOCIDAD) % 1, this.prota.alfa);
-      } else {
-        this.prota.update((this.prota.t - this.VELOCIDAD) % 1, this.prota.alfa);
       }
     }
     if (this.teclas.get('a')) {
       this.prota.update(this.prota.t, (this.prota.alfa - 0.03) % (Math.PI * 2));
     }
     if (this.teclas.get('s')) {
-      if (this.VELOCIDAD >= 0) {
-        this.VELOCIDAD = this.VELOCIDAD + 0.000001;
-        if (this.VELOCIDAD < 0) {
-          this.VELOCIDAD = 0;
-        }
-        this.prota.update((this.prota.t - this.VELOCIDAD) % 1, this.prota.alfa);
-      } else {
-        this.VELOCIDAD = this.VELOCIDAD + 0.000001;
-        if (this.VELOCIDAD > this.VELOCIDAD_MAX) {
-          this.VELOCIDAD = this.VELOCIDAD_MAX;
-        }
-        this.prota.update((this.prota.t - this.VELOCIDAD) % 1, this.prota.alfa);
-      }
+      atras = true;
+      this.VELOCIDAD = 0;
+      this.prota.update((this.prota.t - 0.0002) % 1, this.prota.alfa);
     }
     if (this.teclas.get('d')) {
       this.prota.update(this.prota.t, (this.prota.alfa + 0.03) % (Math.PI * 2));
