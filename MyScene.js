@@ -139,10 +139,13 @@ class MyScene extends THREE.Scene {
         this.add(plancton);
         this.cajaPlancton = new THREE.Box3().setFromObject(plancton);
         this.cajaPlancton.expandByScalar(-0.6);
+        this.cajaPlanctonVisible = new THREE.Box3Helper(this.cajaPlancton,0xffff00);
+        this.cajaPlanctonVisible.visible=true;
+        this.add(this.cajaPlanctonVisible);
         this.enemigosAColisionar.push([this.cajaPlancton, plancton]);
         var ovni = new Ovni(this.circuito.children[0], (((aleatorio * i) + 0.2) % 1), ((i * aleatorio) % (Math.PI * 2)) + (1 * j));
         this.cajaOvni = new THREE.Box3().setFromObject(ovni);
-        this.cajaOvni.expandByScalar(-0.6);
+        this.cajaOvni.expandByScalar(-3);
         this.enemigosPicking.push(ovni);
         this.add(ovni);
         this.enemigosAColisionar.push([this.cajaOvni, ovni]);
@@ -159,19 +162,28 @@ class MyScene extends THREE.Scene {
       var aleatorio = Math.random();
       var tornillos = new C_tornillos(this.circuito.children[0], (aleatorio * i) % 1, (i * aleatorio) % (Math.PI * 2));
       this.cajaTornillos = new THREE.Box3().setFromObject(tornillos);
-      this.cajaTornillos.expandByScalar(0.8);
+      this.cajaTornillos.expandByScalar(-2);
+      this.cajaTornillosVisible = new THREE.Box3Helper(this.cajaTornillos,0xffff00);
+      this.cajaTornillosVisible.visible=true;
+      this.add(this.cajaTornillosVisible );
       this.add(tornillos);
       this.tornillosAColisionar.push([this.cajaTornillos, tornillos]);
 
       var placas = new C_placa(this.circuito.children[0], ((aleatorio * i)) % 1, (i * aleatorio) % (Math.PI * 2) + 0.4);
       this.cajaPlaca = new THREE.Box3().setFromObject(placas);
-      this.cajaPlaca.expandByScalar(0.8);
+      this.cajaPlaca.expandByScalar(-2);
+      this.cajaPlacaVisible = new THREE.Box3Helper(this.cajaPlaca,0xffff00);
+      this.cajaPlacaVisible.visible=true;
+      this.add(this.cajaPlacaVisible);
       this.add(placas);
       this.placasAColisionar.push([this.cajaPlaca, placas]);
 
       var investigaciones = new Investigacion(this.circuito.children[0], ((aleatorio * i)) % 1, (i * aleatorio) % (Math.PI * 2) + 0.8);
       this.cajaInvestigacion = new THREE.Box3().setFromObject(investigaciones);
-      this.cajaInvestigacion.expandByScalar(0.8);
+      this.cajaInvestigacion.expandByScalar(-2);
+      this.cajaInvestigacionVisible = new THREE.Box3Helper(this.cajaInvestigacion,0xffff00);
+      this.cajaInvestigacionVisible.visible=true;
+      this.add(this.cajaInvestigacionVisible);
       this.add(investigaciones);
       this.investigacionesAColisionar.push([this.cajaInvestigacion, investigaciones]);
     }
@@ -455,7 +467,7 @@ class MyScene extends THREE.Scene {
     }
 
     this.cajaProta.setFromObject(this.padreNoTransformable);
-    this.cajaProta.expandByScalar(-1);
+    this.cajaProta.expandByScalar(-1.5);
 
   }
 
