@@ -140,8 +140,8 @@ class MyScene extends THREE.Scene {
         this.add(plancton);
         this.cajaPlancton = new THREE.Box3().setFromObject(plancton);
         this.cajaPlancton.expandByScalar(-0.6);
-        this.cajaPlanctonVisible = new THREE.Box3Helper(this.cajaPlancton,0xffff00);
-        this.cajaPlanctonVisible.visible=true;
+        this.cajaPlanctonVisible = new THREE.Box3Helper(this.cajaPlancton, 0xffff00);
+        this.cajaPlanctonVisible.visible = true;
         this.add(this.cajaPlanctonVisible);
         this.enemigosAColisionar.push([this.cajaPlancton, plancton]);
         var ovni = new Ovni(this.circuito.children[0], (((aleatorio * i) + 0.2) % 1), ((i * aleatorio) % (Math.PI * 2)) + (1 * j));
@@ -163,17 +163,17 @@ class MyScene extends THREE.Scene {
       var tornillos = new C_tornillos(this.circuito.children[0], (aleatorio * i) % 1, (i * aleatorio) % (Math.PI * 2));
       this.cajaTornillos = new THREE.Box3().setFromObject(tornillos);
       this.cajaTornillos.expandByScalar(-2);
-      this.cajaTornillosVisible = new THREE.Box3Helper(this.cajaTornillos,0xffff00);
-      this.cajaTornillosVisible.visible=true;
-      this.add(this.cajaTornillosVisible );
+      this.cajaTornillosVisible = new THREE.Box3Helper(this.cajaTornillos, 0xffff00);
+      this.cajaTornillosVisible.visible = true;
+      this.add(this.cajaTornillosVisible);
       this.add(tornillos);
       this.tornillosAColisionar.push([this.cajaTornillos, tornillos]);
 
       var placas = new C_placa(this.circuito.children[0], ((aleatorio * i)) % 1, (i * aleatorio) % (Math.PI * 2) + 0.4);
       this.cajaPlaca = new THREE.Box3().setFromObject(placas);
       this.cajaPlaca.expandByScalar(-2);
-      this.cajaPlacaVisible = new THREE.Box3Helper(this.cajaPlaca,0xffff00);
-      this.cajaPlacaVisible.visible=true;
+      this.cajaPlacaVisible = new THREE.Box3Helper(this.cajaPlaca, 0xffff00);
+      this.cajaPlacaVisible.visible = true;
       this.add(this.cajaPlacaVisible);
       this.add(placas);
       this.placasAColisionar.push([this.cajaPlaca, placas]);
@@ -181,8 +181,8 @@ class MyScene extends THREE.Scene {
       var investigaciones = new Investigacion(this.circuito.children[0], ((aleatorio * i)) % 1, (i * aleatorio) % (Math.PI * 2) + 0.8);
       this.cajaInvestigacion = new THREE.Box3().setFromObject(investigaciones);
       this.cajaInvestigacion.expandByScalar(-2);
-      this.cajaInvestigacionVisible = new THREE.Box3Helper(this.cajaInvestigacion,0xffff00);
-      this.cajaInvestigacionVisible.visible=true;
+      this.cajaInvestigacionVisible = new THREE.Box3Helper(this.cajaInvestigacion, 0xffff00);
+      this.cajaInvestigacionVisible.visible = true;
       this.add(this.cajaInvestigacionVisible);
       this.add(investigaciones);
       this.investigacionesAColisionar.push([this.cajaInvestigacion, investigaciones]);
@@ -200,19 +200,27 @@ class MyScene extends THREE.Scene {
       this.raycaster.setFromCamera(this.mouse, this.camera2);
 
       var arrayMesh = this.enemigosAColisionar.map((value) => value[1]);
+
       console.log(arrayMesh);
 
       var pickedObjects = this.raycaster.intersectObjects(arrayMesh, true);
 
       if (pickedObjects.length > 0) {
-        //Sacar el mesh en concreto que ha sido clickado
-        var mesh = pickedObjects[0].object;
-        console.log("Clickado "+mesh);
-        mesh.update((mesh.t + 0.5) % 1, mesh.alfa);  
+        var object = pickedObjects[0].object;
+
+        // Buscar en la jerarquía de padres para encontrar el objeto Plancton
+        while (object && (!(object instanceof Plancton) || !(object instanceof Ovni))) {
+          object = object.parent;
+        }
+
+        if (object) {
+          console.log(object);
+          object.update((object.t+0.5)%1, object.alfa);
+        }
       }
-      
+
     } catch (e) {
-      console.log("Se ha disparado al aire"+ e);
+      console.log("Se ha disparado al aire" + e);
     }
 
   }
@@ -233,74 +241,6 @@ class MyScene extends THREE.Scene {
     this.cameraControl.panSpeed = 0.5;
 
     this.cameraControl.target = look;
-  }
-
-  createCameraThirdPerson() {
-
-    this.cameraController = new THREE.Object3D();
-    this.cameraController.position.set(0, 30, -19);
-    this.cameraController.rotateY(Math.PI);
-    this.cameraController.rotateX(-Math.PI / 12);
-
-    this.camera2 = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000);
-    this.cameraController.add(this.camera2);
-  }
-
-  colisionaEnemigo() {
-    var colision = false;
-    for (var i = 0; i < this.enemigosAColisionar.length; i++) {
-      if (this.cajaProta.intersectsBox(this.enemigosAColisionar[i])) {
-        if (this.recienColisionado != this.enemigosAColisionar[i]) {
-          this.recienColisionado = this.enemigosAColisionar[i];
-          colision = true;
-        }
-        return colision;
-      }
-    }
-    return colision;
-  }
-
-  colisionaTornillos() {
-    var colision = false;
-    for (var i = 0; i < this.tornillosAColisionar.length; i++) {
-      if (this.cajaProta.intersectsBox(this.tornillosAColisionar[i])) {
-        if (this.recienColisionado != this.tornillosAColisionar[i]) {
-          this.recienColisionado = this.tornillosAColisionar[i];
-          colision = true;
-        }
-        return colision;
-      }
-    }
-    return colision;
-  }
-
-  colisionaPlacas() {
-    var colision = false;
-    for (var i = 0; i < this.placasAColisionar.length; i++) {
-      if (this.cajaProta.intersectsBox(this.placasAColisionar[i])) {
-        if (this.recienColisionado != this.placasAColisionar[i]) {
-          this.recienColisionado = this.placasAColisionar[i];
-          colision = true;
-          console.log("Colisiona placa");
-        }
-        return colision;
-      }
-    }
-    return colision;
-  }
-
-  colisionaInvestigaciones() {
-    var colision = false;
-    for (var i = 0; i < this.investigacionesAColisionar.length; i++) {
-      if (this.cajaProta.intersectsBox(this.investigacionesAColisionar[i])) {
-        if (this.recienColisionado != this.investigacionesAColisionar[i]) {
-          this.recienColisionado = this.investigacionesAColisionar[i];
-          colision = true;
-        }
-        return colision;
-      }
-    }
-    return colision;
   }
 
   createGUI() {
@@ -363,6 +303,7 @@ class MyScene extends THREE.Scene {
           this.recienColisionadoEnemigo = caja;
           colision = true;
           this.VELOCIDAD = 0.00025;
+          console.log(mesh);
         }
         return colision;
       }
@@ -418,28 +359,6 @@ class MyScene extends THREE.Scene {
     return colision;
   }
 
-  createGUI() {
-
-    var gui = new GUI();
-
-    this.guiControls = {
-      t: 0.5,
-      alfa: 0
-    }
-
-    var folder = gui.addFolder('Gui');
-
-    folder.add(this.guiControls, 't', 0, 1, 0.0001)
-      .name('Recorrido : ')
-      .onChange((value) => this.prota.update(value, this.guiControls.alfa));
-
-    folder.add(this.guiControls, 'alfa', 0, 2 * Math.PI, 0.01)
-      .name('Giro : ')
-      .onChange((value) => this.prota.update(this.guiControls.t, value));
-
-    return gui;
-  }
-
   moverProta() {
     var atras;
     if (this.teclas.get('w')) {
@@ -484,14 +403,14 @@ class MyScene extends THREE.Scene {
 
   compruebaVuelta() {
     if (this.prota.t > 0.99 && !this.vueltaCompletada) {
-        this.VUELTA++;
-        this.VELOCIDAD_MAX = this.VELOCIDAD_MAX + (this.VELOCIDAD_MAX * 0.1);
-        console.log("Vuelta: " + this.VUELTA + " Velocidad: " + this.VELOCIDAD_MAX);
-        this.vueltaCompletada = true;
+      this.VUELTA++;
+      this.VELOCIDAD_MAX = this.VELOCIDAD_MAX + (this.VELOCIDAD_MAX * 0.1);
+      console.log("Vuelta: " + this.VUELTA + " Velocidad: " + this.VELOCIDAD_MAX);
+      this.vueltaCompletada = true;
     } else if (this.prota.t < 0.99) {
-        this.vueltaCompletada = false;
+      this.vueltaCompletada = false;
     }
-}
+  }
 
   cambiaCamara() {
     if (this.guiControls.cambia) {
