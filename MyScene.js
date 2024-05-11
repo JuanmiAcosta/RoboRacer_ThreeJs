@@ -141,12 +141,17 @@ class MyScene extends THREE.Scene {
         this.enemigosPicking.push(plancton);
         this.add(plancton);
         this.cajaPlancton = new THREE.Box3().setFromObject(plancton);
+<<<<<<< HEAD
         this.cajaPlancton.expandByScalar(-0.5);
         this.enemigosAColisionar.push([this.cajaPlancton, plancton]);
+=======
+        this.cajaPlancton.expandByScalar(-0.9);
+        this.enemigosAColisionar.push(this.cajaPlancton);
+>>>>>>> 3d3cb7dc6c63f42a622f397557c7104b9aa0c779
 
         var ovni = new Ovni(this.circuito.children[0], (((aleatorio * i) + 0.2) % 1), ((i * aleatorio) % (Math.PI * 2)) + (1 * j));
         this.cajaOvni = new THREE.Box3().setFromObject(ovni);
-        this.cajaOvni.expandByScalar(-0.5);
+        this.cajaOvni.expandByScalar(-0.9);
         this.enemigosPicking.push(ovni);
         this.add(ovni);
         this.enemigosAColisionar.push([this.cajaOvni, ovni]);
@@ -163,19 +168,31 @@ class MyScene extends THREE.Scene {
       var aleatorio = Math.random();
       var tornillos = new C_tornillos(this.circuito.children[0], (aleatorio * i) % 1, (i * aleatorio) % (Math.PI * 2));
       this.cajaTornillos = new THREE.Box3().setFromObject(tornillos);
+<<<<<<< HEAD
       this.cajaTornillos.expandByScalar(0.8);
+=======
+      this.cajaTornillos.expandByScalar(0.9);
+>>>>>>> 3d3cb7dc6c63f42a622f397557c7104b9aa0c779
       this.add(tornillos);
       this.tornillosAColisionar.push([this.cajaTornillos, tornillos]);
 
       var placas = new C_placa(this.circuito.children[0], ((aleatorio * i)) % 1, (i * aleatorio) % (Math.PI * 2) + 0.4);
       this.cajaPlaca = new THREE.Box3().setFromObject(placas);
+<<<<<<< HEAD
       this.cajaPlaca.expandByScalar(0.8);
+=======
+      this.cajaPlaca.expandByScalar(0.9);
+>>>>>>> 3d3cb7dc6c63f42a622f397557c7104b9aa0c779
       this.add(placas);
       this.placasAColisionar.push([this.cajaPlaca, placas]);
 
       var investigaciones = new Investigacion(this.circuito.children[0], ((aleatorio * i)) % 1, (i * aleatorio) % (Math.PI * 2) + 0.8);
       this.cajaInvestigacion = new THREE.Box3().setFromObject(investigaciones);
+<<<<<<< HEAD
       this.cajaInvestigacion.expandByScalar(0.8);
+=======
+      this.cajaInvestigacion.expandByScalar(0.9);
+>>>>>>> 3d3cb7dc6c63f42a622f397557c7104b9aa0c779
       this.add(investigaciones);
       this.investigacionesAColisionar.push([this.cajaInvestigacion, investigaciones]);
     }
@@ -208,9 +225,146 @@ class MyScene extends THREE.Scene {
 
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 2000);
 
+<<<<<<< HEAD
     this.camera.position.set(0, 0, 450);
     var look = new THREE.Vector3(0, 0, 0);
     this.camera.lookAt(look);
+=======
+  this.camera.position.set(0, 0, 450);
+  var look = new THREE.Vector3(0, 0, 0);
+  this.camera.lookAt(look);
+  this.add(this.camera);
+
+  this.cameraControl = new TrackballControls(this.camera, this.renderer.domElement);
+
+  this.cameraControl.rotateSpeed = 5;
+  this.cameraControl.zoomSpeed = -2;
+  this.cameraControl.panSpeed = 0.5;
+
+  this.cameraControl.target = look;
+}
+
+createCameraThirdPerson() {
+
+  this.cameraController = new THREE.Object3D();
+  this.cameraController.position.set(0, 30, -19);
+  this.cameraController.rotateY(Math.PI);
+  this.cameraController.rotateX(-Math.PI / 12);
+
+  this.camera2 = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000);
+  this.cameraController.add(this.camera2);
+}
+
+colisionaEnemigo(){
+  var colision = false;
+  for (var i = 0; i < this.enemigosAColisionar.length; i++) {
+    if (this.cajaProta.intersectsBox(this.enemigosAColisionar[i])) {
+      if (this.recienColisionado != this.enemigosAColisionar[i]) {
+        this.recienColisionado = this.enemigosAColisionar[i];
+        colision = true;
+      }
+      return colision;
+    }
+  }
+  return colision;
+}
+
+colisionaTornillos(){
+  var colision = false;
+  for (var i = 0; i < this.tornillosAColisionar.length; i++) {
+    if (this.cajaProta.intersectsBox(this.tornillosAColisionar[i])) {
+      if (this.recienColisionado != this.tornillosAColisionar[i]) {
+        this.recienColisionado = this.tornillosAColisionar[i];
+        colision = true;
+      }
+      return colision;
+    }
+  }
+  return colision;
+}
+
+colisionaPlacas(){
+  var colision = false;
+  for (var i = 0; i < this.placasAColisionar.length; i++) {
+    if (this.cajaProta.intersectsBox(this.placasAColisionar[i])) {
+      if (this.recienColisionado != this.placasAColisionar[i]) {
+        this.recienColisionado = this.placasAColisionar[i];
+        colision = true;
+        console.log("Colisiona placa");
+      }
+      return colision;
+    }
+  }
+  return colision;
+}
+
+colisionaInvestigaciones(){
+  var colision = false;
+  for (var i = 0; i < this.investigacionesAColisionar.length; i++) {
+    if (this.cajaProta.intersectsBox(this.investigacionesAColisionar[i])) {
+      if (this.recienColisionado != this.investigacionesAColisionar[i]) {
+        this.recienColisionado = this.investigacionesAColisionar[i];
+        colision = true;
+      }
+      return colision;
+    }
+  }
+  return colision;
+}
+
+createGUI() {
+
+  var gui = new GUI();
+
+  this.guiControls = {
+    t: 0.5,
+    alfa: 0
+  }
+
+  var folder = gui.addFolder('Gui');
+
+  folder.add(this.guiControls, 't', 0, 1, 0.0001)
+    .name('Recorrido : ')
+    .onChange((value) => this.prota.update(value, this.guiControls.alfa));
+
+  folder.add(this.guiControls, 'alfa', 0, 2 * Math.PI, 0.01)
+    .name('Giro : ')
+    .onChange((value) => this.prota.update(this.guiControls.t, value));
+
+  return gui;
+}
+
+moverProta() {
+  if (this.teclas.get('w')) {
+    this.prota.update((this.prota.t + this.VELOCIDAD) % 1, this.prota.alfa);
+  }
+  if (this.teclas.get('a')) {
+    this.prota.update(this.prota.t, (this.prota.alfa - 0.03) % (Math.PI * 2));
+  }
+  if (this.teclas.get('s')) {
+    console.log((this.prota.t - this.VELOCIDAD) % 1);
+    if ((this.prota.t - this.VELOCIDAD) % 1 < 0) {
+      this.prota.t=1;
+    }
+    this.prota.update((this.prota.t - this.VELOCIDAD) % 1, this.prota.alfa);
+    
+  }
+  if (this.teclas.get('d')) {
+    this.prota.update(this.prota.t, (this.prota.alfa + 0.03) % (Math.PI * 2));
+  }
+
+  this.cajaProta.setFromObject(this.padreNoTransformable);
+  this.cajaProta.expandByScalar(-1);
+
+}
+
+cambiaCamara() {
+  if (this.guiControls.cambia) {
+    this.remove(this.camera);
+    this.padreCamara.add(this.cameraController);
+  } else {
+    this.padreCamara.remove(this.cameraController);
+>>>>>>> 3d3cb7dc6c63f42a622f397557c7104b9aa0c779
     this.add(this.camera);
 
     this.cameraControl = new TrackballControls(this.camera, this.renderer.domElement);
