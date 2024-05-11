@@ -6,13 +6,17 @@ class HUD {
 
     static restarVida() { //quitar una .vida de .vida_container si hay más de 0
 
-        if (HUD.vidas >= 1) {
+        if (HUD.vidas > 1) {
             HUD.vidas -= 1;
             var vidas = document.querySelector('.vida_container');
             var vida = document.querySelector('.vida');
             vidas.removeChild(vida);
 
         } else {
+            HUD.vidas -= 1;
+            var vidas = document.querySelector('.vida_container');
+            var vida = document.querySelector('.vida');
+            vidas.removeChild(vida);
             console.log("No hay vidas que quitar");
             alert("Has perdido todas las vidas, vuelve a intentarlo.");
             HUD.restaurarHUD();
