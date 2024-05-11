@@ -8,7 +8,7 @@ import { Cabeza } from './Cabeza.js'
 
 class Ensamblado extends THREE.Object3D {
 
-  constructor(tuboMesh, t = 0.5, alfa = 0) {
+  constructor(tuboMesh, t = 0, alfa = 0) {
     super();
 
     this.t = t;

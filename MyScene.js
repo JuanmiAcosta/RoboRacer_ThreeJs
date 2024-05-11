@@ -20,9 +20,12 @@ class MyScene extends THREE.Scene {
     super();
 
     this.VELOCIDAD_MAX = 0.00075;
+    this.VUELTA = 0;
+    this.vueltaCompletada = false;
 
     this.NUMENEMIGOS = 10;
     this.NUMPREMIOS = 5;
+    this.SUBE_VEL = 0.000001;
     this.VELOCIDAD = 0;
 
     this.renderer = this.createRenderer(myCanvas);
@@ -68,7 +71,6 @@ class MyScene extends THREE.Scene {
 
     // INICIALIZAMOS ARRAY DE OBJETOS A COLISIONAR (ENEMIGOS)
     this.enemigosAColisionar = [];
-    this.enemigosPicking = [];
     this.tornillosAColisionar = [];
     this.placasAColisionar = [];
     this.investigacionesAColisionar = [];
@@ -135,7 +137,6 @@ class MyScene extends THREE.Scene {
 
       for (var j = 0; j < 3; j++) {
         var plancton = new Plancton(this.circuito.children[0], (aleatorio * i) % 1, ((i * aleatorio) % (Math.PI * 2)) + (1 * j));
-        this.enemigosPicking.push(plancton);
         this.add(plancton);
         this.cajaPlancton = new THREE.Box3().setFromObject(plancton);
         this.cajaPlancton.expandByScalar(-0.6);
@@ -146,7 +147,6 @@ class MyScene extends THREE.Scene {
         var ovni = new Ovni(this.circuito.children[0], (((aleatorio * i) + 0.2) % 1), ((i * aleatorio) % (Math.PI * 2)) + (1 * j));
         this.cajaOvni = new THREE.Box3().setFromObject(ovni);
         this.cajaOvni.expandByScalar(-3);
-        this.enemigosPicking.push(ovni);
         this.add(ovni);
         this.enemigosAColisionar.push([this.cajaOvni, ovni]);
       }
@@ -199,15 +199,20 @@ class MyScene extends THREE.Scene {
 
       this.raycaster.setFromCamera(this.mouse, this.camera2);
 
-      var pickedObjects = this.raycaster.intersectObjects(this.enemigosPicking, true);
+      var arrayMesh = this.enemigosAColisionar.map((value) => value[1]);
+      console.log(arrayMesh);
+
+      var pickedObjects = this.raycaster.intersectObjects(arrayMesh, true);
 
       if (pickedObjects.length > 0) {
-        console.log("Clickado");
+        //Sacar el mesh en concreto que ha sido clickado
+        var mesh = pickedObjects[0].object;
+        console.log("Clickado "+mesh);
+        mesh.update((mesh.t + 0.5) % 1, mesh.alfa);  
       }
-      //Saber que mesh se ha clickado en ese momento
-      console.log(pickedObjects[pickedObjects.length - 1].object);
+      
     } catch (e) {
-      console.log("Se ha disparado al aire");
+      console.log("Se ha disparado al aire"+ e);
     }
 
   }
@@ -357,7 +362,7 @@ class MyScene extends THREE.Scene {
         if (this.recienColisionadoEnemigo != caja) {
           this.recienColisionadoEnemigo = caja;
           colision = true;
-          console.log(mesh);
+          this.VELOCIDAD = 0.00025;
         }
         return colision;
       }
@@ -439,11 +444,14 @@ class MyScene extends THREE.Scene {
     var atras;
     if (this.teclas.get('w')) {
       atras = false;
-      this.VELOCIDAD = this.VELOCIDAD + 0.000001;
+      this.VELOCIDAD = this.VELOCIDAD + this.SUBE_VEL;
       if (this.VELOCIDAD >= this.VELOCIDAD_MAX) {
         this.VELOCIDAD = this.VELOCIDAD_MAX;
       }
       this.prota.update((this.prota.t + this.VELOCIDAD) % 1, this.prota.alfa);
+
+      this.compruebaVuelta();
+
     } else {
       if (!this.teclas.get('s') && !atras) {
         //aqui se frena
@@ -455,21 +463,35 @@ class MyScene extends THREE.Scene {
       }
     }
     if (this.teclas.get('a')) {
-      this.prota.update(this.prota.t, (this.prota.alfa - 0.03) % (Math.PI * 2));
+      this.prota.update(this.prota.t, (this.prota.alfa - 0.01) % (Math.PI * 2));
     }
     if (this.teclas.get('s')) {
       atras = true;
       this.VELOCIDAD = 0;
+      if (this.prota.t - 0.0002 < 0) {
+        this.prota.t = 1;
+      }
       this.prota.update((this.prota.t - 0.0002) % 1, this.prota.alfa);
     }
     if (this.teclas.get('d')) {
-      this.prota.update(this.prota.t, (this.prota.alfa + 0.03) % (Math.PI * 2));
+      this.prota.update(this.prota.t, (this.prota.alfa + 0.01) % (Math.PI * 2));
     }
 
     this.cajaProta.setFromObject(this.padreNoTransformable);
-    this.cajaProta.expandByScalar(-1.5);
+    this.cajaProta.expandByScalar(-1.2);
 
   }
+
+  compruebaVuelta() {
+    if (this.prota.t > 0.99 && !this.vueltaCompletada) {
+        this.VUELTA++;
+        this.VELOCIDAD_MAX = this.VELOCIDAD_MAX + (this.VELOCIDAD_MAX * 0.1);
+        console.log("Vuelta: " + this.VUELTA + " Velocidad: " + this.VELOCIDAD_MAX);
+        this.vueltaCompletada = true;
+    } else if (this.prota.t < 0.99) {
+        this.vueltaCompletada = false;
+    }
+}
 
   cambiaCamara() {
     if (this.guiControls.cambia) {
@@ -592,11 +614,6 @@ class MyScene extends THREE.Scene {
     if (this.colisionaInvestigaciones()) {
       console.log("COLISION INVESTIGACIONES");
       HUD.actualizarBarraInvestigacion();
-    }
-
-    if (HUD.vida <= 0) {
-      alert("GAME OVER");
-      location.reload();
     }
 
     requestAnimationFrame(() => this.update(this.toro.update()));
