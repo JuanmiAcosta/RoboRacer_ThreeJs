@@ -24,8 +24,9 @@ class MyScene extends THREE.Scene {
     this.VUELTA = 0;
     this.vueltaCompletada = false;
 
-    this.NUMENEMIGOS = 10;
+    this.NUMENEMIGOS = 5;
     this.NUMPREMIOS = 5;
+    this.NUMINVESTIGACIONES = 10;
     this.SUBE_VEL = 0.000001;
     this.VELOCIDAD = 0;
 
@@ -39,11 +40,9 @@ class MyScene extends THREE.Scene {
     this.add(this.circuito);
 
     this.prota = new Ensamblado(this.circuito.children[0]);
-    this.prota.add(this.iluminacionProta);
-    this.padreNoTransformable = new THREE.Object3D();
     this.padreNoTransformable = this.prota;
     this.padreCamara = this.prota.children[0].children[0];
-    this.cajaProta = new THREE.Box3().setFromObject(this.padreNoTransformable);
+    this.cajaProta = this.prota.cajaProta;
     this.add(this.prota);
 
     this.fondo = new THREE.Mesh(new THREE.SphereGeometry(600, 600, 600), new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide }));
@@ -78,12 +77,6 @@ class MyScene extends THREE.Scene {
 
     this.colocarEnemigos();
     this.colocarPremios();
-
-    //PARA VISUALIZAR LAS CAJAS DE COLISION
-    var caja1 = new THREE.Box3Helper(this.cajaProta, 0xffff00);
-    this.add(caja1);
-
-    caja1.visible = true;
 
     //----------------------------------------------------------------
 
@@ -127,19 +120,14 @@ class MyScene extends THREE.Scene {
   colocarEnemigos() {
 
     for (var i = 0; i < this.NUMENEMIGOS; i++) {
-      //Generar un numero aleatorio entre 0 y 1
-      var aleatorio = Math.random();
 
       for (var j = 0; j < 3; j++) {
-        var plancton = new Plancton(this.circuito.children[0], (aleatorio * i) % 1, ((i * aleatorio) % (Math.PI * 2)) + (1 * j));
+        var plancton = new Plancton(this.circuito.children[0], (0.15 * (i+1)) % 1, ((j*0.6) % (Math.PI * 2)));
         this.add(plancton);
         this.cajaPlancton = new THREE.Box3().setFromObject(plancton);
         this.cajaPlancton.expandByScalar(-0.6);
-        this.cajaPlanctonVisible = new THREE.Box3Helper(this.cajaPlancton, 0xffff00);
-        this.cajaPlanctonVisible.visible = true;
-        this.add(this.cajaPlanctonVisible);
         this.enemigosAColisionar.push([this.cajaPlancton, plancton]);
-        var ovni = new Ovni(this.circuito.children[0], (((aleatorio * i) + 0.2) % 1), ((i * aleatorio) % (Math.PI * 2)) + (1 * j));
+        var ovni = new Ovni(this.circuito.children[0], (0.30 * (i+1) % 1), ((j*0.6) % (Math.PI * 2)));
         this.ovnis.push(ovni);
         this.cajaOvni = new THREE.Box3().setFromObject(ovni);
         this.cajaOvni.expandByScalar(-3);
@@ -159,27 +147,39 @@ class MyScene extends THREE.Scene {
       var tornillos = new C_tornillos(this.circuito.children[0], (aleatorio * i) % 1, (i * aleatorio) % (Math.PI * 2));
       this.cajaTornillos = new THREE.Box3().setFromObject(tornillos);
       this.cajaTornillos.expandByScalar(-2);
-      this.cajaTornillosVisible = new THREE.Box3Helper(this.cajaTornillos, 0xffff00);
-      this.cajaTornillosVisible.visible = true;
-      this.add(this.cajaTornillosVisible);
+      // this.cajaTornillosVisible = new THREE.Box3Helper(this.cajaTornillos, 0xffff00);
+      // this.cajaTornillosVisible.visible = true;
+      //this.add(this.cajaTornillosVisible);
       this.add(tornillos);
       this.tornillosAColisionar.push([this.cajaTornillos, tornillos]);
 
       var placas = new C_placa(this.circuito.children[0], ((aleatorio * i)) % 1, (i * aleatorio) % (Math.PI * 2) + 0.4);
       this.cajaPlaca = new THREE.Box3().setFromObject(placas);
       this.cajaPlaca.expandByScalar(-2);
-      this.cajaPlacaVisible = new THREE.Box3Helper(this.cajaPlaca, 0xffff00);
-      this.cajaPlacaVisible.visible = true;
-      this.add(this.cajaPlacaVisible);
+      // this.cajaPlacaVisible = new THREE.Box3Helper(this.cajaPlaca, 0xffff00);
+      // this.cajaPlacaVisible.visible = true;
+      //this.add(this.cajaPlacaVisible);
       this.add(placas);
       this.placasAColisionar.push([this.cajaPlaca, placas]);
 
       var investigaciones = new Investigacion(this.circuito.children[0], ((aleatorio * i)) % 1, (i * aleatorio) % (Math.PI * 2) + 0.8);
       this.cajaInvestigacion = new THREE.Box3().setFromObject(investigaciones);
       this.cajaInvestigacion.expandByScalar(-2);
-      this.cajaInvestigacionVisible = new THREE.Box3Helper(this.cajaInvestigacion, 0xffff00);
-      this.cajaInvestigacionVisible.visible = true;
-      this.add(this.cajaInvestigacionVisible);
+      // this.cajaInvestigacionVisible = new THREE.Box3Helper(this.cajaInvestigacion, 0xffff00);
+      // this.cajaInvestigacionVisible.visible = true;
+      //this.add(this.cajaInvestigacionVisible);
+      this.add(investigaciones);
+      this.investigacionesAColisionar.push([this.cajaInvestigacion, investigaciones]);
+    }
+
+    for (var i=0; i<this.NUMINVESTIGACIONES; i++) {
+      var aleatorio = Math.random();
+      var investigaciones = new Investigacion(this.circuito.children[0], ((aleatorio * i)) % 1, (i * aleatorio) % (Math.PI * 2) + 0.8);
+      this.cajaInvestigacion = new THREE.Box3().setFromObject(investigaciones);
+      this.cajaInvestigacion.expandByScalar(-2);
+      // this.cajaInvestigacionVisible = new THREE.Box3Helper(this.cajaInvestigacion, 0xffff00);
+      // this.cajaInvestigacionVisible.visible = true;
+      //this.add(this.cajaInvestigacionVisible);
       this.add(investigaciones);
       this.investigacionesAColisionar.push([this.cajaInvestigacion, investigaciones]);
     }
@@ -304,6 +304,8 @@ class MyScene extends THREE.Scene {
           if (this.VELOCIDAD < 0) {
             this.VELOCIDAD = 0;
           }
+          //Llamamos a animación del prota
+          this.prota.colision();
           console.log(mesh);
         }
         return colision;
@@ -399,8 +401,9 @@ class MyScene extends THREE.Scene {
       this.prota.update(this.prota.t, (this.prota.alfa + 0.01) % (Math.PI * 2));
     }
 
-    this.cajaProta.setFromObject(this.padreNoTransformable);
-    this.cajaProta.expandByScalar(-1.2);
+    // COLISIÓN ANTIGUA
+    // this.cajaProta.setFromObject(this.padreNoTransformable);
+    // this.cajaProta.expandByScalar(-1.2);
 
   }
 

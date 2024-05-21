@@ -17,8 +17,6 @@ class Circuito extends THREE.Object3D {
 
     var materialCircuito = new THREE.MeshPhongMaterial({ map: texture });
 
-    var materialCircuito = new THREE.MeshPhongMaterial({ map: texture });
-
     // A partir del torius knot hacer un tubeGeometry
     var path = this.getPathFromTorusKnot(torusKnotGeometry);
 

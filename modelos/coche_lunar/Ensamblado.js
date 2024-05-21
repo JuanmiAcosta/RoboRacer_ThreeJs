@@ -11,6 +11,18 @@ class Ensamblado extends THREE.Object3D {
   constructor(tuboMesh, t = 0, alfa = 0) {
     super();
 
+    // ANIMACIONES
+
+    this.colisionAnimacion = false;
+    this.girado = 0;
+    this.andandoAnimacion = true;
+
+    this.giroHombro = 0;
+    this.giroCodo = 0;
+    this.giroMano = 0;
+
+    //--------------------------------
+
     this.t = t;
     this.alfa = alfa;
 
@@ -74,6 +86,10 @@ class Ensamblado extends THREE.Object3D {
     this.cabeza = new Cabeza();
     this.ensamblado.add(this.cabeza);
 
+    //COLISIONES --------------------------------------------------------------------------------------------
+
+    this.cajaProta = new THREE.Box3().setFromObject(this.ensamblado);
+
     // TUBO --------------------------------------------------------------------------------------------
     // El constructor del personaje recibe la geometria del Tubo para extraer información necesaria
     this.tubo = geomTubo;
@@ -95,6 +111,32 @@ class Ensamblado extends THREE.Object3D {
     this.update(t,alfa);
   }
 
+  colision(){
+    this.colisionAnimacion=true;
+  }
+
+  animacionAndar(){
+    this.giroHombro += 0.05;
+    this.brazol.hombro.rotation.y = Math.sin(this.giroHombro );
+    this.brazor.hombro.rotation.y = Math.sin(this.giroHombro );
+
+    this.giroCodo += 0.05;
+    this.brazol.codo.rotation.y = Math.sin(this.giroCodo);
+    this.brazor.codo.rotation.y = Math.sin(this.giroCodo );
+
+    this.giroMano += 0.05;
+    this.brazol.resultMesh1.rotation.x = Math.sin(this.giroMano);
+    this.brazor.resultMesh1.rotation.x = Math.sin(this.giroMano);
+
+    this.ruedalb.rotation.x += 0.1;
+    this.ruedalt.rotation.x += 0.1;
+    this.ruedarb.rotation.x += 0.1;
+    this.ruedart.rotation.x += 0.1;
+    this.ruedalm.rotation.x += 0.1;
+    this.ruedarm.rotation.x += 0.1;
+
+  }
+
   update(t,alfa) {
     
 
@@ -114,7 +156,25 @@ class Ensamblado extends THREE.Object3D {
 
     this.t = t;
     this.alfa = alfa;
-    
+
+    this.cajaProta.setFromObject(this.ensamblado);  
+
+    if (this.colisionAnimacion){
+      this.andandoAnimacion = false;
+      this.ensamblado.rotation.y += 0.1;
+      this.girado += 0.1;
+      if (this.girado >= 4*Math.PI){
+        this.colisionAnimacion = false;
+        this.andandoAnimacion = true;
+        this.girado = 0;
+        this.ensamblado.rotation.y = 0;
+      }
+    }
+
+    if (this.andandoAnimacion){
+      this.animacionAndar();
+    }
+
   }
 
 
