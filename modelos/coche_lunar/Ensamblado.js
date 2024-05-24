@@ -115,29 +115,29 @@ class Ensamblado extends THREE.Object3D {
     this.colisionAnimacion=true;
   }
 
-  animacionAndar(){
-    this.giroHombro += 0.05;
+  animacionAndar(velocidad){
+    this.giroHombro += velocidad *15;
     this.brazol.hombro.rotation.y = Math.sin(this.giroHombro );
     this.brazor.hombro.rotation.y = Math.sin(this.giroHombro );
 
-    this.giroCodo += 0.05;
+    this.giroCodo += velocidad *15;
     this.brazol.codo.rotation.y = Math.sin(this.giroCodo);
     this.brazor.codo.rotation.y = Math.sin(this.giroCodo );
 
-    this.giroMano += 0.05;
+    this.giroMano += velocidad *15;
     this.brazol.resultMesh1.rotation.x = Math.sin(this.giroMano);
     this.brazor.resultMesh1.rotation.x = Math.sin(this.giroMano);
 
-    this.ruedalb.rotation.x += 0.1;
-    this.ruedalt.rotation.x += 0.1;
-    this.ruedarb.rotation.x += 0.1;
-    this.ruedart.rotation.x += 0.1;
-    this.ruedalm.rotation.x += 0.1;
-    this.ruedarm.rotation.x += 0.1;
+    this.ruedalb.rotation.x += velocidad * 30;
+    this.ruedalt.rotation.x += velocidad * 30;
+    this.ruedarb.rotation.x += velocidad * 30;
+    this.ruedart.rotation.x += velocidad * 30;
+    this.ruedalm.rotation.x += velocidad * 30;
+    this.ruedarm.rotation.x += velocidad * 30;
 
   }
 
-  update(t,alfa) {
+  update(t,alfa,velocidad) {
     
 
     var posTmp = this.path.getPointAt(t);
@@ -172,7 +172,8 @@ class Ensamblado extends THREE.Object3D {
     }
 
     if (this.andandoAnimacion){
-      this.animacionAndar();
+      if (velocidad != null)
+      this.animacionAndar(velocidad);
     }
 
   }

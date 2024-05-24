@@ -254,11 +254,11 @@ class MyScene extends THREE.Scene {
 
     folder.add(this.guiControls, 't', 0, 1, 0.0001)
       .name('Recorrido : ')
-      .onChange((value) => this.prota.update(value, this.guiControls.alfa));
+      .onChange((value) => this.prota.update(value, this.guiControls.alfa, this.VELOCIDAD));
 
     folder.add(this.guiControls, 'alfa', 0, 2 * Math.PI, 0.01)
       .name('Giro : ')
-      .onChange((value) => this.prota.update(this.guiControls.t, value));
+      .onChange((value) => this.prota.update(this.guiControls.t, value, this.VELOCIDAD));
 
     return gui;
   }
@@ -372,7 +372,7 @@ class MyScene extends THREE.Scene {
       if (this.VELOCIDAD >= this.VELOCIDAD_MAX) {
         this.VELOCIDAD = this.VELOCIDAD_MAX;
       }
-      this.prota.update((this.prota.t + this.VELOCIDAD) % 1, this.prota.alfa);
+      this.prota.update((this.prota.t + this.VELOCIDAD) % 1, this.prota.alfa, this.VELOCIDAD);
 
       this.compruebaVuelta();
 
@@ -383,11 +383,11 @@ class MyScene extends THREE.Scene {
         if (this.VELOCIDAD < 0) {
           this.VELOCIDAD = 0;
         }
-        this.prota.update((this.prota.t + this.VELOCIDAD) % 1, this.prota.alfa);
+        this.prota.update((this.prota.t + this.VELOCIDAD) % 1, this.prota.alfa, this.VELOCIDAD);
       }
     }
     if (this.teclas.get('a')) {
-      this.prota.update(this.prota.t, (this.prota.alfa - 0.01) % (Math.PI * 2));
+      this.prota.update(this.prota.t, (this.prota.alfa - 0.01) % (Math.PI * 2), this.VELOCIDAD);
     }
     if (this.teclas.get('s')) {
       atras = true;
@@ -395,10 +395,10 @@ class MyScene extends THREE.Scene {
       if (this.prota.t - 0.0002 < 0) {
         this.prota.t = 1;
       }
-      this.prota.update((this.prota.t - 0.0002) % 1, this.prota.alfa);
+      this.prota.update((this.prota.t - 0.0002) % 1, this.prota.alfa, this.VELOCIDAD);
     }
     if (this.teclas.get('d')) {
-      this.prota.update(this.prota.t, (this.prota.alfa + 0.01) % (Math.PI * 2));
+      this.prota.update(this.prota.t, (this.prota.alfa + 0.01) % (Math.PI * 2), this.VELOCIDAD);
     }
 
     // COLISIÓN ANTIGUA
