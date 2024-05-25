@@ -14,8 +14,14 @@ class Circuito extends THREE.Object3D {
     texture.wrapS=THREE.RepeatWrapping;
     texture.wrapT=THREE.RepeatWrapping;
     texture.repeat.set(10,3);
-
-    var materialCircuito = new THREE.MeshPhongMaterial({ map: texture });
+    
+    //Añadimos bumpMap al circuito
+    const bumpTexture = new THREE.TextureLoader().load('./textures/circuito_bump_map.jpg');
+    bumpTexture.wrapS=THREE.RepeatWrapping;
+    bumpTexture.wrapT=THREE.RepeatWrapping;
+    bumpTexture.repeat.set(10,3);
+      
+    var materialCircuito = new THREE.MeshPhongMaterial({ map: texture, bumpMap: bumpTexture, bumpScale: 25});
 
     // A partir del torius knot hacer un tubeGeometry
     var path = this.getPathFromTorusKnot(torusKnotGeometry);
