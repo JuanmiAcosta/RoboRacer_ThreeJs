@@ -88,7 +88,25 @@ class Ensamblado extends THREE.Object3D {
 
     //COLISIONES --------------------------------------------------------------------------------------------
 
-    this.cajaProta = new THREE.Box3().setFromObject(this.ensamblado);
+    this.cajaProta = new THREE.Box3().setFromObject( this.ensamblado);
+
+    //LUCES --------------------------------------------------------------------------------------------
+
+    this.objetoAlejado = new THREE.Object3D();
+    this.objetoAlejado.position.set(0, 0, 10);
+    this.ensamblado.add(this.objetoAlejado);
+
+    //Luz que sigue al protagonista
+    this.spotProta = new THREE.SpotLight(0xffffff);
+    this.spotProta.power = 5000;
+    this.spotProta.angle = Math.PI / 4;
+    this.spotProta.penumbra = 1;
+    this.spotProta.decay = 2;
+    this.spotProta.position.set(0 , 2.5, 0);
+    this.spotProta.target = this.objetoAlejado;
+    this.spotProta.rotateOnAxis(new THREE.Vector3(0,1,0), Math.PI/2 );
+
+    this.ensamblado.add(this.spotProta);
 
     // TUBO --------------------------------------------------------------------------------------------
     // El constructor del personaje recibe la geometria del Tubo para extraer información necesaria
@@ -120,11 +138,11 @@ class Ensamblado extends THREE.Object3D {
     this.brazol.hombro.rotation.y = Math.sin(this.giroHombro );
     this.brazor.hombro.rotation.y = Math.sin(this.giroHombro );
 
-    this.giroCodo += velocidad *15;
+    this.giroCodo += velocidad *50;
     this.brazol.codo.rotation.y = Math.sin(this.giroCodo);
     this.brazor.codo.rotation.y = Math.sin(this.giroCodo );
 
-    this.giroMano += velocidad *15;
+    this.giroMano += velocidad *50;
     this.brazol.resultMesh1.rotation.x = Math.sin(this.giroMano);
     this.brazor.resultMesh1.rotation.x = Math.sin(this.giroMano);
 
@@ -169,6 +187,19 @@ class Ensamblado extends THREE.Object3D {
         this.girado = 0;
         this.ensamblado.rotation.y = 0;
       }
+
+      //Hacer que parpadee la luz del prota 3 veces
+
+      for (let i = 0; i < 3; i++) {
+        setTimeout(() => {
+          this.spotProta.intensity = 0;
+          setTimeout(() => {
+            this.spotProta.intensity = 5000;
+          }, 300);
+        }, i * 1000);
+      } 
+
+
     }
 
     if (this.andandoAnimacion){

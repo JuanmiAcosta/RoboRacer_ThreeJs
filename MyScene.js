@@ -32,9 +32,6 @@ class MyScene extends THREE.Scene {
 
     this.renderer = this.createRenderer(myCanvas);
     this.gui = this.createGUI();
-    this.createLights();
-    this.createCamera();
-    this.createCameraThirdPerson();
 
     this.circuito = new Circuito();
     this.add(this.circuito);
@@ -44,6 +41,10 @@ class MyScene extends THREE.Scene {
     this.padreCamara = this.prota.children[0].children[0];
     this.cajaProta = this.prota.cajaProta;
     this.add(this.prota);
+
+    this.createCamera();
+    this.createCameraThirdPerson(); 
+    this.createLights();  
 
     this.fondo = new THREE.Mesh(new THREE.SphereGeometry(600, 600, 600), new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide }));
     this.add(this.fondo);
@@ -284,11 +285,11 @@ class MyScene extends THREE.Scene {
   createCameraThirdPerson() {
 
     this.cameraController = new THREE.Object3D();
-    this.cameraController.position.set(0, 30, -19);
+    this.cameraController.position.set(0, 30, -22  );
     this.cameraController.rotateY(Math.PI);
     this.cameraController.rotateX(-Math.PI / 12);
 
-    this.camera2 = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000);
+    this.camera2 = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 1000);
     this.cameraController.add(this.camera2);
   }
 
@@ -432,18 +433,18 @@ class MyScene extends THREE.Scene {
 
     //ILUMINACION 
     //luz direccional 1
-    this.iluminacionProta = new THREE.DirectionalLight(0xffaaaa, 8.5);
+    this.iluminacionProta = new THREE.DirectionalLight(0xffaaaa, 6.5);
     this.iluminacionProta.position.set(0, 0, -50);
 
     //luz ambiental
     this.ambientLight = new THREE.AmbientLight(0x404040, 1);
 
     //luz direccional 2
-    this.iluminacionProta2 = new THREE.DirectionalLight(0xaaaaff, 8.5);
+    this.iluminacionProta2 = new THREE.DirectionalLight(0xaaaaff, 6.5);
     this.iluminacionProta2.position.set(0, 0, 50);
     this.iluminacionProta2.rotateY(Math.PI);
 
-    //Luz puntual amarilla
+    //Luz puntual del planeta
     this.luzPuntual = new THREE.PointLight(0x00ffff);
     this.luzPuntual.intensity = 1;
     this.luzPuntual.power = 100000;
@@ -456,7 +457,7 @@ class MyScene extends THREE.Scene {
     this.add(this.ambientLight);
     this.add(this.luzPuntual);
   }
-
+ 
   setAxisVisible(valor) {
     this.axis.visible = valor;
   }
