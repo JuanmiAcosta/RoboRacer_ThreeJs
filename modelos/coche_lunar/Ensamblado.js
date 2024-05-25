@@ -134,15 +134,15 @@ class Ensamblado extends THREE.Object3D {
   }
 
   animacionAndar(velocidad){
-    this.giroHombro += velocidad *15;
+    this.giroHombro += velocidad *30;
     this.brazol.hombro.rotation.y = Math.sin(this.giroHombro );
     this.brazor.hombro.rotation.y = Math.sin(this.giroHombro );
 
-    this.giroCodo += velocidad *50;
+    this.giroCodo += velocidad *30;
     this.brazol.codo.rotation.y = Math.sin(this.giroCodo);
     this.brazor.codo.rotation.y = Math.sin(this.giroCodo );
 
-    this.giroMano += velocidad *50;
+    this.giroMano += velocidad *30;
     this.brazol.resultMesh1.rotation.x = Math.sin(this.giroMano);
     this.brazor.resultMesh1.rotation.x = Math.sin(this.giroMano);
 
