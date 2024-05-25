@@ -46,7 +46,18 @@ class MyScene extends THREE.Scene {
     this.createCameraThirdPerson(); 
     this.createLights();  
 
-    this.fondo = new THREE.Mesh(new THREE.SphereGeometry(600, 600, 600), new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide }));
+    //Textura de vídeo
+    var video2 = document.createElement('video');
+    video2.addEventListener('canplaythrough', () => { video2.play()});
+    video2.src = './imgs/fondo_juego.mp4';
+    video2.load();
+    video2.play();
+    video2.loop = true;
+    video2.muted = true;
+
+    var videoTexture2 = new THREE.VideoTexture(video2);
+
+    this.fondo = new THREE.Mesh(new THREE.SphereGeometry(600, 600, 600), new THREE.MeshBasicMaterial({ map: videoTexture2, side: THREE.DoubleSide }));
     this.add(this.fondo);
 
     this.sol = new THREE.Mesh(new THREE.SphereGeometry(10, 10, 10), new THREE.MeshPhongMaterial({ color: 0x00ffff, shininess: 80, specular: 0x00ffff, side: THREE.DoubleSide }));
