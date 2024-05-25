@@ -185,19 +185,6 @@ class MyScene extends THREE.Scene {
       this.add(investigaciones);
       this.investigacionesAColisionar.push([this.cajaInvestigacion, investigaciones]);
     }
-
-    // for (var i=0; i<this.NUMINVESTIGACIONES; i++) {
-    //   var aleatorio = Math.random();
-    //   var investigaciones = new Investigacion(this.circuito.children[0], ((aleatorio * i)) % 1, (i * aleatorio) % (Math.PI * 2) + 0.8);
-    //   this.cajaInvestigacion = new THREE.Box3().setFromObject(investigaciones);
-    //   this.cajaInvestigacion.expandByScalar(-2);
-    //   // this.cajaInvestigacionVisible = new THREE.Box3Helper(this.cajaInvestigacion, 0xffff00);
-    //   // this.cajaInvestigacionVisible.visible = true;
-    //   //this.add(this.cajaInvestigacionVisible);
-    //   this.add(investigaciones);
-    //   this.investigacionesAColisionar.push([this.cajaInvestigacion, investigaciones]);
-    // }
-
   }
 
   picking(event) {
