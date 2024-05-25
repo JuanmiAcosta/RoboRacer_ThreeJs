@@ -20,14 +20,14 @@ class MyScene extends THREE.Scene {
 
     super();
 
-    this.VELOCIDAD_MAX = 0.00075;
+    this.VELOCIDAD_MAX = 0.00050;
     this.VUELTA = 0;
     this.vueltaCompletada = false;
 
     this.NUMENEMIGOS = 5;
     this.NUMPREMIOS = 10;
     this.NUMINVESTIGACIONES = 10;
-    this.SUBE_VEL = 0.000001;
+    this.SUBE_VEL = 0.0000005;
     this.VELOCIDAD = 0;
 
     this.renderer = this.createRenderer(myCanvas);
@@ -43,12 +43,12 @@ class MyScene extends THREE.Scene {
     this.add(this.prota);
 
     this.createCamera();
-    this.createCameraThirdPerson(); 
-    this.createLights();  
+    this.createCameraThirdPerson();
+    this.createLights();
 
     //Textura de vídeo
     var video2 = document.createElement('video');
-    video2.addEventListener('canplaythrough', () => { video2.play()});
+    video2.addEventListener('canplaythrough', () => { video2.play() });
     video2.src = './imgs/fondo_juego.mp4';
     video2.load();
     video2.play();
@@ -129,12 +129,12 @@ class MyScene extends THREE.Scene {
   }
 
   colocarEnemigos() {
-    let posicionesPlancton = [{t:0.15,alfa:0.5},{t:0.3,alfa:0},{t:0.4,alfa:2},{t:0.55,alfa:1},{t:0.65,alfa:0.9},{t:0.7,alfa:0.5},{t:0.8,alfa:1},{t:0.87,alfa:2.3},{t:0.92,alfa:2.6},{t:0.98,alfa:2.1}];
-    let posicionesOvni = [{t:0.15,alfa:0.9},{t:0.3,alfa:1},{t:0.4,alfa:4},{t:0.55,alfa:5},{t:0.65,alfa:2},{t:0.7,alfa:2},{t:0.8,alfa:2.2},{t:0.87,alfa:1},{t:0.92,alfa:1},{t:0.98,alfa:1.3}];
+    let posicionesPlancton = [{ t: 0.15, alfa: 0.5 }, { t: 0.3, alfa: 0 }, { t: 0.4, alfa: 2 }, { t: 0.55, alfa: 1 }, { t: 0.65, alfa: 0.9 }, { t: 0.7, alfa: 0.5 }, { t: 0.8, alfa: 1 }, { t: 0.87, alfa: 2.3 }, { t: 0.92, alfa: 2.6 }, { t: 0.98, alfa: 0 }];
+    let posicionesOvni = [{ t: 0.15, alfa: 0.9 }, { t: 0.3, alfa: 1 }, { t: 0.4, alfa: 4 }, { t: 0.55, alfa: 0 }, { t: 0.65, alfa: 2 }, { t: 0.7, alfa: 2 }, { t: 0.8, alfa: 0 }, { t: 0.87, alfa: 1 }, { t: 0.92, alfa: 1 }, { t: 0.98, alfa: 1.3 }];
     let k = 0;
     for (var i = 0; i < this.NUMENEMIGOS; i++) {
-      
-      for (var j = 0; j < 2 ; j++) {
+
+      for (var j = 0; j < 2; j++) {
         var plancton = new Plancton(this.circuito.children[0], posicionesPlancton[k].t, posicionesPlancton[k].alfa);
         this.add(plancton);
         this.cajaPlancton = new THREE.Box3().setFromObject(plancton);
@@ -153,14 +153,14 @@ class MyScene extends THREE.Scene {
   }
 
   colocarPremios() {
-    let posicionesTornillos = [{t:0.15,alfa:4.2},{t:0.3,alfa:3.5},{t:0.4,alfa:3.2},{t:0.55,alfa:2.7},{t:0.65,alfa:2.9},{t:0.7,alfa:3.5},{t:0.8,alfa:3.5},{t:0.87,alfa:0},{t:0.92,alfa:5},{t:0.98,alfa:4.1}];
-    let posicionesPlaca = [{t:0.15,alfa:2},{t:0.3,alfa:1.9},{t:0.38,alfa:1.2},{t:0.55,alfa:1.7},{t:0.65,alfa:1.5},{t:0.79,alfa:1.75},{t:0.8,alfa:4},{t:0.87,alfa:3.5},{t:0.92,alfa:0},{t:0.98,alfa:3.5}];
-    let posicionesInvestigacion = [{t:0.15,alfa:3},{t:0.25,alfa:0},{t:0.32,alfa:0.7},{t:0.55,alfa:0},{t:0.65,alfa:0.3},{t:0.6,alfa:0},{t:0.8,alfa:0},{t:0.87,alfa:4.7},{t:0.92,alfa:3.5},{t:0.98,alfa:0}];
+    let posicionesTornillos = [{ t: 0.15, alfa: 4.2 }, { t: 0.3, alfa: 3.5 }, { t: 0.4, alfa: 3.2 }, { t: 0.55, alfa: 2.7 }, { t: 0.65, alfa: 2.9 }, { t: 0.7, alfa: 3.5 }, { t: 0.8, alfa: 3.5 }, { t: 0.87, alfa: 0 }, { t: 0.92, alfa: 5 }, { t: 0.98, alfa: 4.1 }];
+    let posicionesPlaca = [{ t: 0.15, alfa: 2 }, { t: 0.3, alfa: 1.9 }, { t: 0.38, alfa: 1.2 }, { t: 0.55, alfa: 1.7 }, { t: 0.65, alfa: 1.5 }, { t: 0.79, alfa: 1.75 }, { t: 0.8, alfa: 4 }, { t: 0.87, alfa: 3.5 }, { t: 0.92, alfa: 0 }, { t: 0.98, alfa: 3.5 }];
+    let posicionesInvestigacion = [{ t: 0.15, alfa: 3 }, { t: 0.25, alfa: 1.3 }, { t: 0.32, alfa: 0.7 }, { t: 0.55, alfa: 0 }, { t: 0.65, alfa: 0.3 }, { t: 0.6, alfa: 3.5 }, { t: 0.8, alfa: 5 }, { t: 0.87, alfa: 4.7 }, { t: 0.92, alfa: 3.5 }, { t: 0.98, alfa: 0 }];
 
 
     for (var i = 0; i < this.NUMPREMIOS; i++) {
       //Generar un numero aleatorio entre 0 y 1
-      var tornillos = new C_tornillos(this.circuito.children[0],posicionesTornillos[i].t, posicionesTornillos[i].alfa);
+      var tornillos = new C_tornillos(this.circuito.children[0], posicionesTornillos[i].t, posicionesTornillos[i].alfa);
       this.cajaTornillos = new THREE.Box3().setFromObject(tornillos);
       this.cajaTornillos.expandByScalar(-2);
       // this.cajaTornillosVisible = new THREE.Box3Helper(this.cajaTornillos, 0xffff00);
@@ -168,7 +168,7 @@ class MyScene extends THREE.Scene {
       //this.add(this.cajaTornillosVisible);
       this.add(tornillos);
       this.tornillosAColisionar.push([this.cajaTornillos, tornillos]);
-      var placas = new C_placa(this.circuito.children[0],posicionesPlaca[i].t, posicionesPlaca[i].alfa);
+      var placas = new C_placa(this.circuito.children[0], posicionesPlaca[i].t, posicionesPlaca[i].alfa);
       this.cajaPlaca = new THREE.Box3().setFromObject(placas);
       this.cajaPlaca.expandByScalar(-2);
       // this.cajaPlacaVisible = new THREE.Box3Helper(this.cajaPlaca, 0xffff00);
@@ -176,7 +176,7 @@ class MyScene extends THREE.Scene {
       //this.add(this.cajaPlacaVisible);
       this.add(placas);
       this.placasAColisionar.push([this.cajaPlaca, placas]);
-      var investigaciones = new Investigacion(this.circuito.children[0],posicionesInvestigacion[i].t, posicionesInvestigacion[i].alfa);
+      var investigaciones = new Investigacion(this.circuito.children[0], posicionesInvestigacion[i].t, posicionesInvestigacion[i].alfa);
       this.cajaInvestigacion = new THREE.Box3().setFromObject(investigaciones);
       this.cajaInvestigacion.expandByScalar(-2);
       // this.cajaInvestigacionVisible = new THREE.Box3Helper(this.cajaInvestigacion, 0xffff00);
@@ -210,7 +210,12 @@ class MyScene extends THREE.Scene {
 
         if (object) {
           console.log(object);
-          object.update((object.t + 0.5) % 1, object.alfa);
+
+          object.restarVida();
+          if (object.VIDAS == 0) {
+            object.update((object.t + 0.5) % 1, object.alfa);
+            object.restarVida(); 
+          }
 
           // Buscar su caja correspondiente en enemigosAColisionar
           var caja = this.enemigosAColisionar.find((value) => value[1] === object)[0];
@@ -285,7 +290,7 @@ class MyScene extends THREE.Scene {
   createCameraThirdPerson() {
 
     this.cameraController = new THREE.Object3D();
-    this.cameraController.position.set(0, 30, -22  );
+    this.cameraController.position.set(0, 30, -22);
     this.cameraController.rotateY(Math.PI);
     this.cameraController.rotateX(-Math.PI / 12);
 
@@ -409,13 +414,27 @@ class MyScene extends THREE.Scene {
   }
 
   compruebaVuelta() {
+
     if (this.prota.t > 0.99 && !this.vueltaCompletada) {
       this.VUELTA++;
+      if (this.VUELTA < 4) {
+        HUD.actualizarVuelta(this.VUELTA);
+      }
       this.VELOCIDAD_MAX = this.VELOCIDAD_MAX + (this.VELOCIDAD_MAX * 0.1);
       console.log("Vuelta: " + this.VUELTA + " Velocidad: " + this.VELOCIDAD_MAX);
       this.vueltaCompletada = true;
     } else if (this.prota.t < 0.99) {
       this.vueltaCompletada = false;
+    }
+
+    if (this.VUELTA == 4) {
+      if (HUD.porcentaje == 100) {
+        alert("HAS GANADO");
+      } else {
+        alert("HAS PERDIDO");
+      }
+
+      this.restaurarJuego();
     }
   }
 
@@ -457,7 +476,7 @@ class MyScene extends THREE.Scene {
     this.add(this.ambientLight);
     this.add(this.luzPuntual);
   }
- 
+
   setAxisVisible(valor) {
     this.axis.visible = valor;
   }
@@ -513,6 +532,18 @@ class MyScene extends THREE.Scene {
 
   }
 
+  restaurarJuego() {
+    //Hacer que se deje de actualizar que he pulsado una tecla
+    this.teclas.clear();
+
+    HUD.restaurarHUD();
+    HUD.actualizarVuelta(0);
+    this.VUELTA = 0;
+    this.VELOCIDAD = 0;
+    this.VELOCIDAD_MAX = 0.00050;
+    this.prota.update(0.01, 0, 0);
+  }
+
   update() {
 
     this.renderer.render(this, this.getCamera());
@@ -526,6 +557,11 @@ class MyScene extends THREE.Scene {
     if (this.colisionaEnemigo()) {
       console.log("COLISION");
       HUD.restarVida();
+
+      if (HUD.vidas <= 0) {
+        alert("HAS PERDIDO");
+        this.restaurarJuego();
+      }
     }
 
     if (this.colisionaTornillos()) {
@@ -535,6 +571,16 @@ class MyScene extends THREE.Scene {
 
     if (this.colisionaPlacas()) {
       console.log("COLISION PLACAS");
+      //Durante 2 segundos un boost de velocidad
+      var velocidad_actual = this.VELOCIDAD;
+
+      setTimeout(() => {
+        this.VELOCIDAD = this.VELOCIDAD + 0.005;
+        setTimeout(() => {
+          this.VELOCIDAD = velocidad_actual;
+        }, 1000);
+      });
+
     }
 
     if (this.colisionaInvestigaciones()) {

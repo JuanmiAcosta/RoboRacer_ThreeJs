@@ -3,6 +3,8 @@ class HUD {
 
     static porcentaje = 0;
     static vidas = 6;
+    static vuelta = 0;
+    static MAX_VUELTAS = 3;
 
     static restarVida() { //quitar una .vida de .vida_container si hay más de 0
 
@@ -19,8 +21,14 @@ class HUD {
             vidas.removeChild(vida);
             console.log("No hay vidas que quitar");
             alert("Has perdido todas las vidas, vuelve a intentarlo.");
-            HUD.restaurarHUD();
         }
+    }
+
+    static actualizarVuelta(num) {
+        console.log("Vuelta: " + num);
+        HUD.vuelta = num;
+        var vuelta = document.getElementById('vueltas');
+        vuelta.textContent = "( " + HUD.vuelta + " / " + HUD.MAX_VUELTAS + " )";
     }
 
     static restaurarHUD() {

@@ -7,6 +7,8 @@ class Ovni extends THREE.Object3D {
   constructor(tuboMesh, t , alfa ) {
     super();
 
+    this.VIDAS=4;
+
     this.MAX_ALTURA = 2;
     this.MIN_ALTURA = -1.5;
     this.SUBIENDO = true;
@@ -78,6 +80,14 @@ class Ovni extends THREE.Object3D {
     this.add(this.padrisimo);
 
     this.update(t,alfa);
+  }
+
+  restarVida(){
+    this.VIDAS--;
+  }
+
+  restaurarVida(){  
+    this.VIDAS=4;
   }
 
   createOvni(){

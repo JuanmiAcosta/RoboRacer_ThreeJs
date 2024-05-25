@@ -5,6 +5,8 @@ class Plancton extends THREE.Object3D {
   constructor(tuboMesh, t , alfa) {
     super();
 
+    this.VIDAS=2;
+
     this.t = t;
     this.alfa = alfa;
 
@@ -107,6 +109,14 @@ class Plancton extends THREE.Object3D {
 
     this.update(t,alfa);
 
+  }
+
+  restarVida(){ 
+    this.VIDAS--;
+  }
+
+  restaurarVida(){
+    this.VIDAS=2;
   }
 
   createHeartShape() {

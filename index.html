@@ -23,10 +23,23 @@
             overflow: hidden;
         }
     </style>
-     <link rel="stylesheet" href="estilos_HUD.css">
+    <link rel="stylesheet" href="estilos_HUD.css">
 </head>
 
 <body>
+
+    <video id="video-background" autoplay="true" muted="true" loop="true">
+        <source src="./imgs/HUD.mp4" type="video/mp4">
+        Iphone doesn't support this cool video :(
+    </video>
+
+    <div id="menu">
+        <div class="trans">
+            <h1>Robo Racer</h1>
+        </div>
+            <button id="start">LET'S GOOO</button>
+        
+    </div>
 
     <!-- Div which will hold the Output -->
     <div id="WebGL-output">
@@ -51,10 +64,18 @@
         </div>
         <!--HUD DE MISION-->
         <div class="mision">
+            <h1 id="vueltas" style="color:white;"> ( 0 / 3 ) </h1>
             <p>La misión consiste en terminar las tres vueltas del circuito habiendo completado la barra de
                 investigación. Confiamos en ti.</p>
         </div>
     </div>
+
+    <script type="text/javascript">
+        //Al pulsar el boton start baja el menu y empieza el juego
+        $("#start").click(function () {
+            $("#menu").slideUp();
+        });
+    </script>
 
 </body>
 

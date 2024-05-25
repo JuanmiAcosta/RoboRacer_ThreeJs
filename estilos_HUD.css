@@ -1,13 +1,13 @@
-
-body{
+body {
     font-family: "Jersey 15", sans-serif;
     font-weight: 300;
     font-style: normal;
-    font-size:20px;
+    font-size: 20px;
 }
 
-.barra_investigacion { /*Arriba centrado*/
-    position:absolute;
+.barra_investigacion {
+    /*Arriba centrado*/
+    position: absolute;
     top: 50px;
     /* centrar horizontal */
     left: 38%;
@@ -22,20 +22,20 @@ body{
     color: #fff;
 }
 
-.barra_investigacion .progreso_container{
+.barra_investigacion .progreso_container {
     background-color: #fff;
     width: 100%;
     height: 25px;
     display: flex;
-    justify-content:baseline;
+    justify-content: baseline;
     align-items: center;
     border: 2px solid #000;
     border-radius: 25px;
 }
 
-.barra_investigacion .progreso_container .progreso{
+.barra_investigacion .progreso_container .progreso {
     background-color: #e14c4c;
-    padding : 2px;
+    padding: 2px;
     width: 0%;
     height: 20px;
     border: 2px solid #000;
@@ -43,9 +43,9 @@ body{
 }
 
 .barra_vidas {
-    position:absolute;
-    bottom : 200px;
-    left : 150px;
+    position: absolute;
+    bottom: 200px;
+    left: 150px;
     width: 420px;
     height: 50px;
     text-align: center;
@@ -57,9 +57,9 @@ body{
     color: #fff;
 }
 
-.vida_container{
+.vida_container {
     height: 50px;
-    width:100%;
+    width: 100%;
     border: 3px solid #fff;
     border-radius: 25px;
     display: flex;
@@ -68,27 +68,96 @@ body{
 }
 
 .vida {
-    width:50px;
+    width: 50px;
     aspect-ratio: 1/1;
     box-shadow: inset;
-    margin:10px;
+    margin: 10px;
 }
 
 .mision {
-    position:absolute;
-    bottom : 200px;
+    position: absolute;
+    bottom: 200px;
     right: 100px;
     width: 400px;
     height: 50px;
     text-align: center;
     padding-top: 10px;
     margin-top: 10px;
+
+    display: flex;
+    flex-direction: column;
 }
 
-.mision p{
+.mision p {
+    margin-top: 10px;
     color: #fff;
-    font-size:30px;
+    font-size: 30px;
     font-family: "Jersey 15", sans-serif;
     font-weight: 200;
     font-style: normal;
+}
+
+/* <div id="menu">
+        <h1>Robo Racer</h1>
+        <button id="start">Start</button>
+    </div> */
+/* QUIERO QUE SE AJUSTE A LA PANTALLA , QUE CUANDO LE DE AL BOTÓN DE START SE VAYA A LA PANTALLA DE JUEGO Y QUE SE VEA EL HUD */
+/* QUE LA PANTALLA DE JUEGO TB SE AJUSTE A TODA LA PANTALLA */
+
+
+#video-background {
+    position: absolute; /* Posiciona el video absolutamente dentro del body */
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Asegúrate de que el video cubra todo el body */
+    z-index: -1; /* Coloca el video detrás de otros contenidos */
+  }
+  
+  #menu {
+    z-index: 1; /* Coloca el #menu delante del video */
+  }
+
+#menu,
+#WebGL-output {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+#menu {
+    color: #fff;
+    text-align: center;
+    font-family: "Jersey 15", sans-serif;
+    font-weight: 200;
+    font-style: normal;
+    font-size: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+#menu button {
+    width:15%;
+    height: 75px;
+    background-color: #0f7f9b;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 20px;
+    cursor: pointer;
+    font-family: "Jersey 15", sans-serif;
+    font-weight: 200;
+    font-style: normal;
+    margin-bottom: 100px;
+}
+
+.trans{
+    width:100%;
+    padding:3px;
+    opacity: 0.8;
+    background-color: #000;
+    margin-bottom:10px;
 }
