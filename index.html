@@ -15,7 +15,7 @@
           { "imports": { "three": "../libs/three.module.js" } }
     </script>
 
-    <script type="module" src="./MyScene.js"></script>
+    <script type="module" src="./RoboRacer.js"></script>
     <script type="module" src="./funciones_HUD.js"></script>
     <style>
         body {
@@ -28,8 +28,13 @@
 
 <body>
 
+    <audio id="audio-background" autoplay loop>
+        <source src="Helldivers 2 Main Theme - A Cup Of Liber-Tea.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
     <video id="video-background" autoplay="true" muted="true" loop="true">
-        <source src="./imgs/HUD.mp4" type="video/mp4">
+        <source src="./imgs/menu.mp4" type="video/mp4">
         Iphone doesn't support this cool video :(
     </video>
 
@@ -37,8 +42,8 @@
         <div class="trans">
             <h1>Robo Racer</h1>
         </div>
-            <button id="start">LET'S GOOO</button>
-        
+        <button id="start">LET'S GOOO</button>
+        <button id="play-button">Sonido 🔈</button>
     </div>
 
     <!-- Div which will hold the Output -->
@@ -74,6 +79,10 @@
         //Al pulsar el boton start baja el menu y empieza el juego
         $("#start").click(function () {
             $("#menu").slideUp();
+        });
+
+        document.getElementById('play-button').addEventListener('click', function () {
+            document.getElementById('audio-background').play();
         });
     </script>
 

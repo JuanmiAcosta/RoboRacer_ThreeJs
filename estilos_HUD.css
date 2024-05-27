@@ -3,6 +3,7 @@ body {
     font-weight: 300;
     font-style: normal;
     font-size: 20px;
+    background-color: #000;
 }
 
 .barra_investigacion {
@@ -107,15 +108,17 @@ body {
 
 #video-background {
     position: absolute; /* Posiciona el video absolutamente dentro del body */
-    width: 100%;
-    height: 100%;
+    width: 60%;
+    height: 60%;
     object-fit: cover; /* Asegúrate de que el video cubra todo el body */
     z-index: -1; /* Coloca el video detrás de otros contenidos */
+    top: 15%;
+    left: 20%;
   }
   
-  #menu {
-    z-index: 1; /* Coloca el #menu delante del video */
-  }
+#menu {
+z-index: 1; /* Coloca el #menu delante del video */
+}
 
 #menu,
 #WebGL-output {
@@ -137,22 +140,36 @@ body {
     justify-content: flex-end;
     align-items: center;
 }
+/*El ultimo boton de menu*/
 
 #menu button {
-    width:15%;
-    height: 75px;
+    width:25%;
+    height: 90px;
     background-color: #0f7f9b;
     color: #fff;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
-    font-size: 20px;
+    font-size: 40px;
     cursor: pointer;
     font-family: "Jersey 15", sans-serif;
     font-weight: 200;
     font-style: normal;
-    margin-bottom: 100px;
+    margin-bottom: 20px;
+    transition: 0.3s;
 }
+
+#menu button:last-child {
+    margin-bottom: 80px;
+}
+
+#menu button:hover {
+    background-color: #909b9e;
+    color: #fff;
+    scale : 1.1;
+}
+
+
 
 .trans{
     width:100%;
