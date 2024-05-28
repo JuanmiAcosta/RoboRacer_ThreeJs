@@ -59,11 +59,11 @@ class RoboRacer extends THREE.Scene {
     this.fondo = new THREE.Mesh(new THREE.SphereGeometry(600, 600, 600), new THREE.MeshBasicMaterial({ map: videoTexture2, side: THREE.DoubleSide }));
     this.add(this.fondo);
 
-    this.sol = new THREE.Mesh(new THREE.SphereGeometry(10, 10, 10), new THREE.MeshPhongMaterial({ color: 0x00ffff, shininess: 80, specular: 0x00ffff, side: THREE.DoubleSide }));
+    this.sol = new THREE.Mesh(new THREE.SphereGeometry(10, 10, 10), new THREE.MeshPhongMaterial({ color: 0x00ffff, shininess: 80, specular: 0x00ffff, side: THREE.DoubleSide, emissive: 0x00ffff, emissiveIntensity: 0.75}));
     this.sol.position.set(0, 0, 0);
     this.add(this.sol);
 
-    this.toro = new THREE.Mesh(new THREE.TorusGeometry(15, 1, 16, 100), new THREE.MeshPhongMaterial({ color: 0x00dddd, shininess: 80, specular: 0x00ffff, side: THREE.DoubleSide }));
+    this.toro = new THREE.Mesh(new THREE.TorusGeometry(15, 1, 16, 100), new THREE.MeshPhongMaterial({ color: 0x00dddd, shininess: 80, specular: 0x00ffff, side: THREE.DoubleSide, emissive: 0x00ffff, emissiveIntensity: 0.75 }));
     this.toro.position.set(0, 0, 0);
 
     this.toro.update = () => {
@@ -401,6 +401,10 @@ class RoboRacer extends THREE.Scene {
   moverProta() {
     var atras;
     if (this.teclas.get('w')) {
+      if (!this.teclas.get('a') && !this.teclas.get('d')){
+        this.prota.enderezar();
+      }
+      
       atras = false;
       this.VELOCIDAD = this.VELOCIDAD + this.SUBE_VEL;
       if (this.VELOCIDAD >= this.VELOCIDAD_MAX) {
@@ -422,6 +426,7 @@ class RoboRacer extends THREE.Scene {
     }
     if (this.teclas.get('a')) {
       this.prota.update(this.prota.t, (this.prota.alfa - 0.01) % (Math.PI * 2), this.VELOCIDAD);
+      this.prota.giro_izquierda();
     }
     if (this.teclas.get('s')) {
       atras = true;
@@ -433,6 +438,7 @@ class RoboRacer extends THREE.Scene {
     }
     if (this.teclas.get('d')) {
       this.prota.update(this.prota.t, (this.prota.alfa + 0.01) % (Math.PI * 2), this.VELOCIDAD);
+      this.prota.giro_derecha();
     }
 
     // COLISIÓN ANTIGUA

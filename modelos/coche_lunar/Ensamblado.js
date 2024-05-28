@@ -13,6 +13,9 @@ class Ensamblado extends THREE.Object3D {
 
     // ANIMACIONES
 
+    this.MAX_GIRO = Math.PI / 6;
+    this.giro_personaje = 0;
+
     this.colisionAnimacion = false;
     this.girado = 0;
     this.andandoAnimacion = true;
@@ -153,6 +156,32 @@ class Ensamblado extends THREE.Object3D {
     this.ruedalm.rotation.x += velocidad * 30;
     this.ruedarm.rotation.x += velocidad * 30;
 
+  }
+
+  giro_derecha(){
+    if (this.ensamblado.rotation.y >= -this.MAX_GIRO){
+      this.giro_personaje += 0.01;
+      this.ensamblado.rotation.y -= 0.01 ;
+    }
+  }
+
+  giro_izquierda(){
+    if (this.ensamblado.rotation.y <= this.MAX_GIRO){
+      this.giro_personaje -= 0.01;
+      this.ensamblado.rotation.y += 0.01 ;
+    }
+  }
+
+  enderezar() {
+
+    if (this.ensamblado.rotation.y > 0){
+      this.ensamblado.rotation.y -= 0.01;
+      this.giro_personaje -= 0.01;
+    }
+    else if (this.ensamblado.rotation.y < 0){
+      this.ensamblado.rotation.y += 0.01;
+      this.giro_personaje += 0.01;
+    }
   }
 
   update(t,alfa,velocidad) {
