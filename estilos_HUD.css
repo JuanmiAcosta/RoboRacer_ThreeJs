@@ -178,3 +178,35 @@ z-index: 1; /* Coloca el #menu delante del video */
     background-color: #000;
     margin-bottom:10px;
 }
+
+/* Barra de carga en menú que se llena a los 5 segundos */
+/*
+<div id="menu">
+        <div class="carga" id="carga">
+            <div class="carga__barra" id="carga__barra"></div>
+        </div>
+        <div class="trans">
+            <h1>Robo Racer</h1>
+        </div>
+        <button id="start">LET'S GOOO</button>
+        <button id="play-button">Sonido 🔈</button>
+    </div>
+    */
+
+h3{
+    margin:2px;
+}
+
+.carga {
+    width: 50%;
+    height: 20px;
+    background-color: #fff;
+    margin-bottom: 270px;
+}
+
+.carga__barra {
+    width: 0%;
+    height: 100%;
+    background-color: #0f7f9b;
+    transition: width 5s;
+}

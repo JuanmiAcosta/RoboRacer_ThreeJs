@@ -39,6 +39,10 @@
     </video>
 
     <div id="menu">
+        <h3>Cargando ...</h3>
+        <div class="carga" id="carga">
+            <div class="carga__barra" id="carga__barra"></div>
+        </div>
         <div class="trans">
             <h1>Robo Racer</h1>
         </div>
@@ -84,6 +88,42 @@
         document.getElementById('play-button').addEventListener('click', function () {
             document.getElementById('audio-background').play();
         });
+
+        //Desactivar los botones hasta que este cargado
+
+        document.getElementById('start').disabled = true;
+        document.getElementById('start').style.cursor = 'not-allowed';
+        document.getElementById('start').style.backgroundColor = 'gray';
+
+        document.getElementById('play-button').disabled = true;
+        document.getElementById('play-button').style.cursor = 'not-allowed';
+        document.getElementById('play-button').style.backgroundColor = 'gray';
+
+        //Carga de la pagina
+        var carga = document.getElementById('carga__barra');
+        var porcentaje = 0;
+        var intervalo = setInterval(function () {
+            porcentaje += 10;
+            carga.style.width = porcentaje + '%';
+            if (porcentaje == 100) {
+                clearInterval(intervalo);
+            }
+        }, 50);
+
+        //Activar los botones cuando este cargado
+        setTimeout(function () {
+            document.getElementById('start').disabled = false;
+            document.getElementById('play-button').disabled = false;
+
+            document.getElementById('start').style.cursor = 'pointer';
+            document.getElementById('start').style.backgroundColor = '#0f7f9b';
+
+            document.getElementById('play-button').style.cursor = 'pointer';
+            document.getElementById('play-button').style.backgroundColor = '#0f7f9b';
+
+        }, 3000);
+
+
     </script>
 
 </body>

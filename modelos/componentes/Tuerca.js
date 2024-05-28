@@ -67,12 +67,12 @@ class Tuerca extends THREE.Object3D {
 
     //this.add(resultMesh);
 
-    var finalCSG = new CSG().setFromMesh(resultMesh);
-    const finalResult = finalCSG.subtract([extrudeMesh]);
+    // var finalCSG = new CSG().setFromMesh(resultMesh);
+    // const finalResult = finalCSG.subtract([extrudeMesh]);
 
-    var finalMesh = new THREE.Mesh(finalResult.toGeometry(), material);
+    // var finalMesh = new THREE.Mesh(finalResult.toGeometry(), material);
 
-    this.add(finalMesh);
+    this.add(resultMesh);
 
     this.position.set(0.4,0,0);
 
