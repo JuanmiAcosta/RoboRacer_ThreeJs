@@ -119,25 +119,6 @@ class Plancton extends THREE.Object3D {
     this.VIDAS=2;
   }
 
-  createHeartShape() {
-    const heartShape = new THREE.Shape();
-    heartShape.moveTo(0, -2);
-    heartShape.bezierCurveTo(-2, 0, -2, 2, 0, 0.5);
-    heartShape.bezierCurveTo(2, 2, 2, 0, 0, -2);
-
-    const material = new THREE.MeshPhongMaterial({ color: 0xff0000, side: THREE.DoubleSide });
-
-    const extrudeSettings = {
-      steps: 20, //Número de divisiones de la extrsuión
-      depth: 1, //Profundida de la extrusión
-      bevelEnabled: false, //Desavtivar el bisel para tener extrusión plana   
-    };
-
-    const geometryExtrude = new THREE.ExtrudeGeometry(heartShape, extrudeSettings);
-
-    this.heart = new THREE.Mesh(geometryExtrude, material);
-  }
-
   createEyeBrow() {
 
     const eyeBrowShape = new THREE.Shape();

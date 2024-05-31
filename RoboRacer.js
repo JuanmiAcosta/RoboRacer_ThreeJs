@@ -213,7 +213,7 @@ class RoboRacer extends THREE.Scene {
           object.restarVida();
           if (object.VIDAS == 0) {
             object.update((object.t + 0.5) % 1, object.alfa);
-            object.restarVida(); 
+            object.restaurarVida(); 
           }
 
           // Buscar su caja correspondiente en enemigosAColisionar
