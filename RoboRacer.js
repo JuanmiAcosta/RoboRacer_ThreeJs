@@ -441,10 +441,6 @@ class RoboRacer extends THREE.Scene {
       this.prota.giro_derecha();
     }
 
-    // COLISIÓN ANTIGUA
-    // this.cajaProta.setFromObject(this.padreNoTransformable);
-    // this.cajaProta.expandByScalar(-1.2);
-
   }
 
   compruebaVuelta() {
