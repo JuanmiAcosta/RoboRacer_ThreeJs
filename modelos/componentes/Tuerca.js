@@ -11,7 +11,9 @@ class Tuerca extends THREE.Object3D {
     //----------------------------------------------------------------------------------------
 
     //MATERIAL CON RELIEVE
-    const material = new THREE.MeshStandardMaterial({color: 0xDDDDDD, roughness: 0.8, metalness: 1, side: THREE.DoubleSide});
+    var texture = new THREE.TextureLoader().load("../textures/bumpmapmetal.jpg");
+
+    const material = new THREE.MeshStandardMaterial({color: 0xDDDDDD, roughness: 0.8, metalness: 1, side: THREE.DoubleSide, map: texture});
 
     const bumpTexture = new THREE.TextureLoader().load('../textures/normalmapmetal.jpg')
     material.bumpMap = bumpTexture
